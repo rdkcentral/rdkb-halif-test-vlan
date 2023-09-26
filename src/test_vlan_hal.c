@@ -4651,7 +4651,6 @@ void test_l1_vlan_hal_negative2_get_shell_outputbuffer_res( void )
         UT_LOG("Invoking _get_shell_outputbuffer_res with valid fp, invalid out : NULL and len : valid value");
         _get_shell_outputbuffer_res(fp, out, len);
 
-        UT_PASS("_get_shell_outputbuffer validation success");
         UT_LOG("Exiting test_l1_vlan_hal_negative2_get_shell_outputbuffer_res...");
     }
     else
