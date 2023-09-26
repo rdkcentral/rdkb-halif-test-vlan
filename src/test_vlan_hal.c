@@ -133,6 +133,7 @@ int get_ifName(void)
             }            
         }
     }
+    //UT_LOG("ifName from config file is : %s",if_Name);
     return 0;
 }
 
@@ -182,7 +183,7 @@ int get_brName(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addGroup with valid groupName, default_vlanID = "1" | groupName = valid value, default_vlanID = "1" | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_hal_addGroup with valid groupName = br_Name[0], default_vlanID = "1" | groupName = br_Name[0], default_vlanID = "1" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_addGroup(void)
 {
@@ -216,7 +217,7 @@ void test_l1_vlan_hal_positive1_addGroup(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addGroup with groupName = "brlan5", default_vlanID = "200" | groupName = "brlan5", default_vlanID = "200" | RETURN_OK | Should be successfully | 
+* | 01 | Invoking vlan_hal_addGroup with groupName = "brlan5", default_vlanID = "200" | groupName = "brlan5", default_vlanID = "200" | RETURN_OK | Should be successful | 
 */
 void test_l1_vlan_hal_positive2_addGroup(void)
 {
@@ -282,7 +283,7 @@ void test_l1_vlan_hal_positive3_addGroup(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_addGroup with valid groupName, default_vlanID = "1" | groupName = valid value, default_vlanID = "1" | RETURN_OK | Should be successfull |
+* | 01 | Invoking vlan_hal_addGroup with valid groupName = br_Name[0], default_vlanID = "1" | groupName = br_Name[0], default_vlanID = "1" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive4_addGroup(void)
 {
@@ -352,7 +353,7 @@ void test_l1_vlan_hal_negative1_addGroup(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_addGroup valid groupName, default_vlanID = "" | groupName = valid value, default_vlanID = "" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addGroup valid groupName = br_Name[0], default_vlanID = "" | groupName = br_Name[0], default_vlanID = "" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative2_addGroup(void)
 {
@@ -419,7 +420,7 @@ void test_l1_vlan_hal_negative3_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description                                          | Test Data                                      | Expected Result     | Notes              |
  * | :--------------: | ---------------------------------------------------- | ---------------------------------------------- | ------------------- | ------------------ |
- * | 01   | Invoking vlan_hal_addGroup with valid groupName, default_vlanID = "0"  | groupName = valid value, default_vlanID = "0" | RETURN_ERR | Should Fail |
+ * | 01   | Invoking vlan_hal_addGroup with valid groupName = br_Name[0], default_vlanID = "0"  | groupName = br_Name[0], default_vlanID = "0" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative4_addGroup(void) {
     
@@ -454,7 +455,7 @@ void test_l1_vlan_hal_negative4_addGroup(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description                                            | Test Data                                      | Expected Result | Notes       |
  * | :--------------: | -------------------------------------------------------| ---------------------------------------------- | ----------------| ----------- |
- * |01| Invoking vlan_hal_addGroup with valid groupName, default_vlanID = "-1" | groupName = valid value, default_vlanID = "-1" |  RETURN_ERR     | Should Fail |
+ * |01| Invoking vlan_hal_addGroup with valid groupName = br_Name[0], default_vlanID = "-1" | groupName = br_Name[0], default_vlanID = "-1" |  RETURN_ERR     | Should Fail |
  */
 void test_l1_vlan_hal_negative5_addGroup(void)
 {
@@ -488,7 +489,7 @@ void test_l1_vlan_hal_negative5_addGroup(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_addGroup with valid groupName, default_vlanID = "4095"  | groupName = valid value, default_vlanID = "4095" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addGroup with valid groupName = br_Name[0], default_vlanID = "4095"  | groupName = br_Name[0], default_vlanID = "4095" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative6_addGroup(void)
 {
@@ -522,7 +523,7 @@ void test_l1_vlan_hal_negative6_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName: NULL, default_vlanID: "1" | groupName = NULL, default_vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addGroup with groupName = NULL, default_vlanID: "1" | groupName = NULL, default_vlanID = "1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative7_addGroup(void)
 {
@@ -556,7 +557,7 @@ void test_l1_vlan_hal_negative7_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | --------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with valid groupName, default_vlanID = NULL | groupName = valid value, default_vlanID = NULL | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addGroup with valid groupName = br_Name[0], default_vlanID = NULL | groupName = br_Name[0], default_vlanID = NULL | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative8_addGroup(void)
 {
@@ -590,7 +591,7 @@ void test_l1_vlan_hal_negative8_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = "brlan5" | groupName = "brlan5" | RETURN_OK | Should successfull |
+ * | 01 | Invoking vlan_hal_addGroup with groupName = "brlan5" | groupName = "brlan5" | RETURN_OK | Should successful |
  */
 void test_l1_vlan_hal_positive1_delGroup(void) {
 
@@ -716,7 +717,7 @@ void test_l1_vlan_hal_negative2_delGroup(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with valid groupName, valid ifName and vlanID = "1"  | groupName = valid value, ifName = valid value, vlanID = "1" | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], valid ifName = if_Name[0] and vlanID = "1"  | groupName = br_Name[0], ifName = if_Name[0], vlanID = "1" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_addInterface...");
@@ -751,7 +752,7 @@ void test_l1_vlan_hal_positive1_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = "200" | groupName = valid value, ifName = valid value, vlanID = "200" | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[1], valid ifName = if_Name[0], vlanID = "200" | groupName = br_Name[1], ifName = if_Name[0], vlanID = "200" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive2_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive2_addInterface...");
@@ -786,7 +787,7 @@ void test_l1_vlan_hal_positive2_addInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 |Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = "4094" | groupName = valid value, ifName = valid value, vlanID = "4094" | RETURN_OK | Should be successful |
+ * | 01 |Invoking vlan_hal_addInterface with valid groupName = br_Name[2], valid ifName = if_Name[0], vlanID = "4094" | groupName = br_Name[2], ifName = if_Name[0], vlanID = "4094" | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive3_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive3_addInterface...");
@@ -821,7 +822,7 @@ void test_l1_vlan_hal_positive3_addInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :--------------: | ----------- | --------- | --------------- | ----- |
- * |       01         | Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = "1" | groupName = valid value, ifName = valid value, vlanID = "1" | RETURN_OK | Should be successful |
+ * |       01         | Invoking vlan_hal_addInterface with valid groupName = br_Name[3], valid ifName = if_Name[0], vlanID = "1" | groupName = br_Name[3], ifName = if_Name[0], vlanID = "1" | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive4_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive4_addInterface...");
@@ -862,7 +863,7 @@ void test_l1_vlan_hal_positive4_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with groupName = "", valid ifName, vlanID = "1" | groupName = "", ifName = valid value, vlanID = "1" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface with groupName = "", valid ifName = if_Name[1], vlanID = "1" | groupName = "", ifName = if_Name[1], vlanID = "1" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative1_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative1_addInterface...");  
@@ -896,7 +897,7 @@ void test_l1_vlan_hal_negative1_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with valid groupName, ifName = "", vlanID = "1" | groupName = valid value, ifName = "", vlanID = "1" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], ifName = "", vlanID = "1" | groupName = br_Name[0], ifName = "", vlanID = "1" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative2_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative2_addInterface ");
@@ -930,7 +931,7 @@ void test_l1_vlan_hal_negative2_addInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data |Expected Result |Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = "" | groupName = valid value, ifName = valid value, vlanID = "" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "" | groupName = br_Name[0], ifName = if_Name[0], vlanID = "" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative3_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative3_addInterface...");
@@ -965,7 +966,7 @@ void test_l1_vlan_hal_negative3_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface groupName = "brlanXYZ", valid ifName, vlanID = "1" | groupName = "brlanXYZ", ifName = valid value, vlanID = "1" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface groupName = "brlanXYZ", valid ifName = if_Name[1], vlanID = "1" | groupName = "brlanXYZ", ifName = if_Name[1], vlanID = "1" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative4_addInterface(void) {
     
@@ -1001,7 +1002,7 @@ void test_l1_vlan_hal_negative4_addInterface(void) {
  * 
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = "0" | groupName = valid value, ifName = valid value, vlanID = "0" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "0" | groupName = br_Name[0], ifName = if_Name[0], vlanID = "0" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative5_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative5_addInterface...");
@@ -1036,7 +1037,7 @@ void test_l1_vlan_hal_negative5_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data                                                   | Expected Result | Notes            |
 * | :--------------: | ----------- | ----------------------------------------------------------  | --------------- | ----------------- |
-* | 01 | Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = "-1"| groupName = valid value, ifName = valid value, vlanID = "-1"| RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "-1"| groupName = br_Name[0], ifName = if_Name[0], vlanID = "-1"| RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative6_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative6_addInterface...");
@@ -1071,7 +1072,7 @@ void test_l1_vlan_hal_negative6_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | --------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with valie groupName, valid ifName, vlanID = "4095" | groupName = valid value, ifName = valid value, vlanID = "4095" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface with valie groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "4095" | groupName = br_Name[0], ifName = if_Name[0], vlanID = "4095" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative7_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative7_addInterface...");
@@ -1106,7 +1107,7 @@ void test_l1_vlan_hal_negative7_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data |Expected Result |Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with groupName = NULL, valid ifName, vlanID = "1"  | groupName = NULL, ifName = valid value, vlanID = "1" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface with groupName = NULL, valid ifName = if_Name[1], vlanID = "1"  | groupName = NULL, ifName = if_Name[1], vlanID = "1" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative8_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative8_addInterface");
@@ -1140,7 +1141,7 @@ void test_l1_vlan_hal_negative8_addInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface with valid groupName, ifName = NULL, vlanID = "1"  | groupName = valid value, ifName = NULL, vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], ifName = NULL, vlanID = "1"  | groupName = br_Name[0], ifName = NULL, vlanID = "1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative9_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative9_addInterface");
@@ -1174,7 +1175,7 @@ void test_l1_vlan_hal_negative9_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_addInterface with valid groupName, valid ifName, vlanID = NULL | groupName = valid value, ifName = valid value, vlanID = NULL | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_addInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = NULL | groupName = br_Name[0], ifName = if_Name[0], vlanID = NULL | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative10_addInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative10_addInterface");
@@ -1209,7 +1210,7 @@ void test_l1_vlan_hal_negative10_addInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_delInterface with valid groupName, ifName = "ethXYZ", vlanID = "1" | groupName = valid value, ifName = "ethXYZ", vlanID = "1" | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_hal_delInterface with valid groupName = br_Name[0], ifName = "ethXYZ", vlanID = "1" | groupName = br_Name[0], ifName = "ethXYZ", vlanID = "1" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_delInterface...");
@@ -1243,7 +1244,7 @@ void test_l1_vlan_hal_positive1_delInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_delInterface with groupName = "", valid ifName, vlanID = "1"  | groupName = "", ifName = valid value, vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_delInterface with groupName = "", valid ifName = if_Name[1], vlanID = "1"  | groupName = "", ifName = if_Name[1], vlanID = "1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative1_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative1_delInterface...");
@@ -1278,7 +1279,7 @@ void test_l1_vlan_hal_negative1_delInterface(void) {
 * 
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_delInterface with valid groupName, ifName = "", vlanID = "1" | groupName = valid value, ifName = "", vlanID = "1" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_delInterface with valid groupName = br_Name[0], ifName = "", vlanID = "1" | groupName = br_Name[0], ifName = "", vlanID = "1" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative2_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative2_delInterface...");
@@ -1314,7 +1315,7 @@ void test_l1_vlan_hal_negative2_delInterface(void) {
  *
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_delInterface with valid groupName, valid ifName, vlanID = "" | groupName = valid value, ifName = valid value, vlanID = "" |  RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_delInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "" | groupName = br_Name[0], ifName = if_Name[0], vlanID = "" |  RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative3_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative3_delInterface...");
@@ -1349,7 +1350,7 @@ void test_l1_vlan_hal_negative3_delInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_delInterface valid groupName, valid ifName, vlanID = "0"  | groupName = valid value, ifName = valid value, vlanID = "0" | RETURN_ERR | Should Fail |
+* | 01 | Invoking vlan_hal_delInterface valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "0"  | groupName = br_Name[0], ifName = if_Name[0], vlanID = "0" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative4_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative4_delInterface...");
@@ -1384,7 +1385,7 @@ void test_l1_vlan_hal_negative4_delInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data                                                   | Expected Result          | Notes              |
  * | :--------------: | ----------- | ----------------------------------------------------------- | ------------------------ | ------------------ |
- * |       01         | Invoking vlan_hal_delInterface with valid groupName, valid ifName, vlanID = "-1" | groupName = valid value, ifName = valid value, vlanID = "-1" | RETURN_ERR | Should Fail |
+ * |       01         | Invoking vlan_hal_delInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "-1" | groupName = br_Name[0], ifName = if_Name[0], vlanID = "-1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative5_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative5_delInterface...");
@@ -1419,7 +1420,7 @@ void test_l1_vlan_hal_negative5_delInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data |Expected Result |Notes |
 | :----: | --------- | ---------- |-------------- | ----- |
-| 01 | Invoking vlan_hal_delInterface with valid groupName, valid ifName, vlanID = "4095" | groupName = valid value, ifName = valid value, vlanID = "4095" | RETURN_ERR | Should Fail |
+| 01 | Invoking vlan_hal_delInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = "4095" | groupName = br_Name[0], ifName = if_Name[0], vlanID = "4095" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative6_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative6_delInterface...");
@@ -1457,7 +1458,7 @@ void test_l1_vlan_hal_negative6_delInterface(void) {
  * 1. Test the negative scenario when passing NULL as the group name and valid interface name and VLAN ID.
  *  | Variation / Step | Description | Test Data | Expected Result | Notes |
  *  | :----: | --------- | ---------- | -------------- | ----- |
- *  | 01 | Invoking vlan_hal_delInterface with groupName = NULL, valid ifName, vlanID = "1" | groupName = NULL, ifName = valid value, vlanID = "1" | RETURN_ERR | Should Fail |
+ *  | 01 | Invoking vlan_hal_delInterface with groupName = NULL, valid ifName = if_Name[1], vlanID = "1" | groupName = NULL, ifName = if_Name[1], vlanID = "1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative7_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative7_delInterface...");
@@ -1491,7 +1492,7 @@ void test_l1_vlan_hal_negative7_delInterface(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data                                             | Expected Result                            | Notes              |
  * | :--------------: | ----------- | ---------------------------------------------------- | ------------------------------------------ | ------------------ |
- * |       01         | Invoking vlan_hal_delInterface with valid groupName, ifName = NULL, vlanID = "1"| groupName = valid value, ifName = NULL, vlanID = "1" | RETURN_ERR | Should Fail |
+ * |       01         | Invoking vlan_hal_delInterface with valid groupName = br_Name[0], ifName = NULL, vlanID = "1"| groupName = br_Name[0], ifName = NULL, vlanID = "1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative8_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative8_delInterface...");
@@ -1526,7 +1527,7 @@ void test_l1_vlan_hal_negative8_delInterface(void) {
  * **Test Procedure:** @n
  *| Variation / Step | Description | Test Data | Expected Result | Notes |
  *|-----------------:|-------------|-----------|-----------------|-------|
- *|      01         |  Invoking vlan_hal_delInterface with valid groupName, valid ifName, vlanID = NULL | groupName = valid value, ifName = valid value, vlanID = NULL | RETURN_ERR | Should Fail |
+ *|      01         |  Invoking vlan_hal_delInterface with valid groupName = br_Name[0], valid ifName = if_Name[0], vlanID = NULL | groupName = br_Name[0], ifName = if_Name[0], vlanID = NULL | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative9_delInterface(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative9_delInterface...");
@@ -1560,7 +1561,7 @@ void test_l1_vlan_hal_negative9_delInterface(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description                       | Test Data                            | Expected Result                  | Notes            |
 * | :--------------: | --------------------------------- | ------------------------------------ | -------------------------------- | ---------------- |
-* |       01         | Invoking vlan_hal_printGroup with valid groupName | groupName = valid value | RETURN_OK  | Should be successful. |
+* |       01         | Invoking vlan_hal_printGroup with valid groupName = br_Name[0] | groupName = br_Name[0] | RETURN_OK  | Should be successful. |
 */
 void test_l1_vlan_hal_positive1_printGroup(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_printGroup...");
@@ -1592,7 +1593,7 @@ void test_l1_vlan_hal_positive1_printGroup(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_printGroup with valid groupName| groupName = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_hal_printGroup with valid groupName = br_Name[1]| groupName = br_Name[1] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive2_printGroup(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive2_printGroup...");
@@ -1624,7 +1625,7 @@ void test_l1_vlan_hal_positive2_printGroup(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data                                               | Expected Result                       | Notes               |
  * | :--------------: | ----------- | ------------------------------------------------------ | -------------------------------------- | ------------------- |
- * |       01         | Invoking vlan_hal_printGroup with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+ * |       01         | Invoking vlan_hal_printGroup with valid groupName = br_Name[2] | groupName = br_Name[2] | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive3_printGroup(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive3_printGroup...");
@@ -1657,7 +1658,7 @@ void test_l1_vlan_hal_positive3_printGroup(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description                          | Test Data                 | Expected Result                       | Notes             |
  * | :--------------: | ------------------------------------ | ------------------------- | ------------------------------------- | ----------------- |
- * |       01         | Invoking vlan_hal_printGroup with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+ * |       01         | Invoking vlan_hal_printGroup with valid groupName = br_Name[3] | groupName = br_Name[3] | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive4_printGroup(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive4_printGroup...");
@@ -1877,7 +1878,7 @@ void test_l1_vlan_hal_negative6_printGroup(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | --------------- | ----- |
- * | 01 | Invoking vlan_hal_printAllGroup | None | RETURN_OK | Should be successful |
+ * | 01 | Invoke vlan_hal_printAllGroup API and check if call succeeds | None | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_printAllGroup(void)
 {
@@ -1908,7 +1909,7 @@ void test_l1_vlan_hal_positive1_printAllGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----:           | ---------   | ----------|  -------------- | ----- |
- * | 01               | Invoking vlan_hal_delete_all_Interfaces with valid groupName| groupName = valid value| RETURN_OK | Should be successful |
+ * | 01               | Invoking vlan_hal_delete_all_Interfaces with valid groupName = br_Name[0]| groupName = br_Name[0]| RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_delete_all_Interfaces(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_delete_all_Interfaces...");
@@ -1940,7 +1941,7 @@ void test_l1_vlan_hal_positive1_delete_all_Interfaces(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_hal_delete_all_Interfaces with valid groupName | groupName = valid value | RETURN_OK | Should be successful  |
+* | 01 | Invoking vlan_hal_delete_all_Interfaces with valid groupName = br_Name[1] | groupName = br_Name[1] | RETURN_OK | Should be successful  |
 */
 void test_test_l1_vlan_hal_positive2_delete_all_Interfaces(void) {
     UT_LOG("Entering test_test_l1_vlan_hal_positive2_delete_all_Interfaces...");
@@ -1972,7 +1973,7 @@ void test_test_l1_vlan_hal_positive2_delete_all_Interfaces(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_hal_delete_all_Interfaces with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_hal_delete_all_Interfaces with valid groupName = br_Name[2] | groupName = br_Name[2] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive3_delete_all_Interfaces(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive3_delete_all_Interfaces...");
@@ -2004,7 +2005,7 @@ void test_l1_vlan_hal_positive3_delete_all_Interfaces(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 |Invoking vlan_hal_delete_all_Interfaces with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+* | 01 |Invoking vlan_hal_delete_all_Interfaces with valid groupName = br_Name[3] | groupName = br_Name[3] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive4_delete_all_Interfaces(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive4_delete_all_Interfaces...");
@@ -2224,7 +2225,7 @@ void test_l1_vlan_hal_negative6_delete_all_Interfaces(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name | br_name = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name = br_Name[0] | br_name = br_Name[0] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge( void )
 {
@@ -2257,7 +2258,7 @@ void test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge( void )
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :------------: | ----------- | --------- | --------------- | ----- |
- * |      01        | Invoking _is_this_group_available_in_linux_bridge with valid br_name | br_name = valid value | RETURN_OK | Should be successful |
+ * |      01        | Invoking _is_this_group_available_in_linux_bridge with valid br_name = br_Name[1] | br_name = br_Name[1] | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge( void )
 {
@@ -2290,7 +2291,7 @@ void test_l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge( void )
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data |Expected Result |Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name | br_name = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name = br_name[64] | br_name = br_name[64] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge( void )
 {
@@ -2323,7 +2324,7 @@ void test_l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge( void )
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name | br_name = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name = br_Name[3] | br_name = br_Name[3] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive4_is_this_group_available_in_linux_bridge( void )
 {
@@ -2550,7 +2551,7 @@ void test_l1_vlan_hal_negative6_is_this_group_available_in_linux_bridge( void )
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "10" | ifName = valid value, vlanID = "10" | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[0], vlanID = "10" | ifName = if_Name[0], vlanID = "10" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2585,7 +2586,7 @@ void test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge( voi
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "1" | ifName = valid value, vlanID = "1" | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[1], vlanID = "1" | ifName = if_Name[1], vlanID = "1" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2619,7 +2620,7 @@ void test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge( voi
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "4094" | ifName = valid value, vlanID = "4094" | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[2], vlanID = "4094" | ifName = if_Name[2], vlanID = "4094" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2686,7 +2687,7 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge( voi
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "" | ifName = valid value, vlanID = "" | RETURN_ERR | Should Fail  |
+* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[1], vlanID = "" | ifName = if_Name[1], vlanID = "" | RETURN_ERR | Should Fail  |
 */
 void test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2720,7 +2721,7 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge( voi
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "0" | ifName = valid value, vlanID = "0"| RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[1], vlanID = "0" | ifName = if_Name[1], vlanID = "0"| RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2754,7 +2755,7 @@ void test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge( voi
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :--------------: | ----------- | --------- | --------------- | ----- |
- * |      01     | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "4095" | ifName = valid value, vlanID = "4095" | RETURN_ERR | Should Fail |
+ * |      01     | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[1], vlanID = "4095" | ifName = if_Name[1], vlanID = "4095" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge(void)
 {
@@ -2822,7 +2823,7 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge( voi
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = NULL| ifName = valid value, vlanID = NULL | RETURN_ERR | Should Fail |
+* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[1], vlanID = NULL| ifName = if_Name[1], vlanID = NULL | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2856,7 +2857,7 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge( voi
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName, vlanID = "abc" | ifName = valid value, vlanID = "abc" | RETURN_ERR | Should Fail |
+* | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[1], vlanID = "abc" | ifName = if_Name[1], vlanID = "abc" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge( void )
 {
@@ -2890,7 +2891,7 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge( voi
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = "10"  | ifName = valid value, br_name = valid value, vlanID = "10" |  RETURN_OK | Should be successful |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[0], valid br_name = br_Name[0], vlanID = "10"  | ifName = if_Name[0], br_name = br_Name[0], vlanID = "10" |  RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge...");
@@ -2925,7 +2926,7 @@ void test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridg
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = "1" | ifName = valid value, br_name = valid value, vlanID = "1" | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[1], valid br_name = br_Name[1], vlanID = "1" | ifName = if_Name[1], br_name = br_Name[1], vlanID = "1" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridge...");
@@ -2960,7 +2961,7 @@ void test_l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridg
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | --------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = "4094" | ifName = valid value, br_name = valid value, vlanID = "4094" | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[2], valid br_name = br_Name[2], vlanID = "4094" | ifName = if_Name[2], br_name = br_Name[2], vlanID = "4094" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive3_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_positive3_is_this_interface_available_in_given_linux_bridge...");
@@ -3028,7 +3029,7 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridg
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, br_name = "", vlanID = "10" | ifName = valid value, br_name = "", vlanID = "10" | RETURN_ERR | Should Fail |
+* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[1], br_name = "", vlanID = "10" | ifName = if_Name[1], br_name = "", vlanID = "10" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge...");
@@ -3062,7 +3063,7 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = "" | ifName = valid value, br_name = valid value, vlanID = "" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[0], valid br_name = br_Name[0], vlanID = "" | ifName = if_Name[0], br_name = br_Name[0], vlanID = "" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge...");
@@ -3071,7 +3072,7 @@ void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridg
     char vlanID[5] = "";
 
     strcpy(ifName, if_Name[0]);
-    strcpy(br_name,br_Name[0]);
+    strcpy(br_name, br_Name[0]);
     UT_LOG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = Empty string", ifName, br_name);
     int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
@@ -3097,7 +3098,7 @@ void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = "0" | ifName = valid value, br_name = value, vlanID = "0" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[0], valid br_name = br_Name[0], vlanID = "0" | ifName = if_Name[0], br_name = br_Name[0], vlanID = "0" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge...");
@@ -3132,7 +3133,7 @@ void test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridg
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = 4095 | ifName = valid value, br_name = valid value, vlanID = 4095 | RETURN_ERR | Should Fail |
+* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[0], valid br_name = br_Name[0], vlanID = 4095 | ifName = if_Name[0], br_name = br_Name[0], vlanID = 4095 | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge...");
@@ -3200,7 +3201,7 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridg
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, br_name = NULL, vlanID = "10" | ifName = valid value, br_name = NULL, vlanID = "10" | RETURN_ERR | Should Fail |
+* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[1], br_name = NULL, vlanID = "10" | ifName = if_Name[1], br_name = NULL, vlanID = "10" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge...");
@@ -3234,7 +3235,7 @@ void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description                                                                               | Test Data                                          | Expected Result          | Notes          |
  * | :--------------: | ------------------------------------------------------------------------------------------| -------------------------------------------------- | -------------------------| ---------------|
- * |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, valid br_name, vlanID = NULL| ifName = valid value, br_name = valid value, vlanID = NULL | RETURN_ERR | Should Fail |
+ * |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[0], valid br_name = br_Name[0], vlanID = NULL| ifName = if_Name[0], br_name = br_Name[0], vlanID = NULL | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge...");
@@ -3269,7 +3270,7 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridg
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :--------------: | ----------- | --------- | --------------- | ----- |
-* |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName, br_name = "brl@n0", vlanID = "10" | ifName = valid value, br_name = "brl@n0", vlanID = "10" | RETURN_ERR | Should Fail |
+* |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = if_Name[1], br_name = "brl@n0", vlanID = "10" | ifName = if_Name[1], br_name = "brl@n0", vlanID = "10" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge...");
@@ -3303,7 +3304,7 @@ void test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_brid
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge valid ifName, valid br_name, vlanID = "abc"  | ifName = valid value, br_name = valid value, vlanID = "abc" | RETURN_ERR | Should Fail |
+* | 01 | Invoking _is_this_interface_available_in_given_linux_bridge valid ifName = if_Name[0], valid br_name = br_Name[0], vlanID = "abc"  | ifName = if_Name[0], br_name = br_Name[0], vlanID = "abc" | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge() {
     UT_LOG("Entering test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge...");
@@ -3338,7 +3339,7 @@ void test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_brid
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "100"| groupName = valid value, vlanID = "100" | RETURN_OK | Should be successful |
+* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "100"| groupName = br_Name[0], vlanID = "100" | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry...");
@@ -3371,7 +3372,7 @@ void test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry(void) {
  * Test Procedure:
  * | Variation / Step | Description                                                  | Test Data                          | Expected Result                | Notes              |
  * | :--------------: | ------------------------------------------------------------ | ---------------------------------- | ------------------------------ | ------------------ |
- * |       01         | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "1"  | groupName = valid value, vlanID = "1" | result = RETURN_OK  | Should be successful |
+ * |       01         | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "1"  | groupName = br_Name[0], vlanID = "1" | result = RETURN_OK  | Should be successful |
  */
 void test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry...");
@@ -3501,7 +3502,7 @@ void test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = NULL | groupName = valid value, vlanID = NULL | RETURN_ERR | Should Fail |
+* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = NULL | groupName = br_Name[0], vlanID = NULL | RETURN_ERR | Should Fail |
 */
 void test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry...");
@@ -3535,10 +3536,9 @@ void test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry(void) {
  * | Variation / Step | Description                                                         | Test Data                      | Expected Result | Notes       |
  * | :--------------: | --------------------------------------------------------------------| ------------------------------ | --------------- | ------------|
  * |       01         | Invoking insert_VLAN_ConfigEntry with groupName = "", vlanID = "100"| groupName = "", vlanID = "100" | RETURN_ERR | Should Fail |
- *
  */
-void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry...");
     char groupName[64] = "";
     char vlanID[5] = "100";
     
@@ -3548,7 +3548,7 @@ void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
 
-    UT_LOG("Exiting test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3567,10 +3567,10 @@ void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "" | groupName = valid value, vlanID = "" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "" | groupName = br_Name[0], vlanID = "" | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry...");
     char groupName[64] = {"\0"};
     char vlanID[5] = "";
 
@@ -3581,7 +3581,7 @@ void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
 
-    UT_LOG("Exiting test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3602,8 +3602,8 @@ void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void) {
 * | :----: | --------- | --------------------------------- | ---------------- | ------ |
 * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = "brlan114", vlanID = "100"  | groupName = "brlan114", vlanID = "100" | RETURN_ERR | Should Fail |
 */
-void test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry...");
     char groupName[64] = "brlan114";
     char vlanID[5] = "100";
     
@@ -3613,7 +3613,7 @@ void test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
 
-    UT_LOG("Exiting test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3632,10 +3632,10 @@ void test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry(void) {
  * **Test Procedure:** @n
  * | Variation / Step   | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "0" | groupName = valid value, vlanID = "0" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "0" | groupName = br_Name[0], vlanID = "0" | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry...");
     char groupName[64] = {"\0"};
     char vlanID[5] = "0";
 
@@ -3646,7 +3646,7 @@ void test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
     
-    UT_LOG("Exiting test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3665,10 +3665,10 @@ void test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "-1" | groupName = valid value, vlanID = "-1" | RETURN_ERR | Should Fail |
+* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "-1" | groupName = br_Name[0], vlanID = "-1" | RETURN_ERR | Should Fail |
 */
-void test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry...");
     char groupName[64] = {"\0"};
     char vlanID[5] = "-1";
 
@@ -3679,7 +3679,7 @@ void test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
     
-    UT_LOG("Exiting test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3698,10 +3698,10 @@ void test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry(void) {
  * **Test Procedure:** @n
  * | Variation / Step   | Description | Test Data | Expected Result | Notes |
  * | :----: | ----------------------------------------------------------------- | ---------- | --------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "5000"| groupName = valid value, vlanID = "5000" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "5000"| groupName = br_Name[0], vlanID = "5000" | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry...");
     char groupName[64] = {"\0"};
     char vlanID[5] = "5000";
     
@@ -3712,7 +3712,7 @@ void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
 
-    UT_LOG("Exiting test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3731,10 +3731,10 @@ void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | --------------- | ----- |
-* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName, vlanID = "1a2b" | groupName = valid value, vlanID = "1a2b" | RETURN_ERR | Should Fail |
+* | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = br_Name[0], vlanID = "1a2b" | groupName = br_Name[0], vlanID = "1a2b" | RETURN_ERR | Should Fail |
 */
-void test_l1_vlan_hal_negative10_insert_VLAN_ConfigEntry(void) {
-    UT_LOG("Entering test_l1_vlan_hal_negative10_insert_VLAN_ConfigEntry...");
+void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void) {
+    UT_LOG("Entering test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry...");
     char groupName[64] = {"\0"};
     char vlanID[5] = "1a2b";
     
@@ -3745,7 +3745,7 @@ void test_l1_vlan_hal_negative10_insert_VLAN_ConfigEntry(void) {
     UT_LOG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
     
-    UT_LOG("Exiting test_l1_vlan_hal_negative10_insert_VLAN_ConfigEntry...");
+    UT_LOG("Exiting test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry...");
 }
 
 /**
@@ -3764,7 +3764,7 @@ void test_l1_vlan_hal_negative10_insert_VLAN_ConfigEntry(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName| groupName = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName = br_Name[0]| groupName = br_Name[0] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry(void)
 {
@@ -3797,7 +3797,7 @@ void test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName = br_Name[1] | groupName = br_Name[1] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive2_delete_VLAN_ConfigEntry(void)
 {
@@ -3831,7 +3831,7 @@ void test_l1_vlan_hal_positive2_delete_VLAN_ConfigEntry(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01     | Invoking delete_VLAN_ConfigEntry with valid groupName | groupName = valid value | RETURN_OK | Should be successful  |
+* | 01     | Invoking delete_VLAN_ConfigEntry with valid groupName = br_Name[2] | groupName = br_Name[2] | RETURN_OK | Should be successful  |
 */
 void test_l1_vlan_hal_positive3_delete_VLAN_ConfigEntry(void)
 {
@@ -3839,7 +3839,7 @@ void test_l1_vlan_hal_positive3_delete_VLAN_ConfigEntry(void)
     char groupName[64] = {"\0"};
     
     strcpy(groupName, br_Name[2]);
-    UT_LOG("Invoking delete_VLAN_ConfigEntry with valid groupName:%d", groupName);
+    UT_LOG("Invoking delete_VLAN_ConfigEntry with valid groupName:%s", groupName);
     int result = delete_VLAN_ConfigEntry(groupName);
     
     UT_LOG("delete_VLAN_ConfigEntry API returns :%d", result);
@@ -3865,7 +3865,7 @@ void test_l1_vlan_hal_positive3_delete_VLAN_ConfigEntry(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName = br_Name[3] | groupName = br_Name[3] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive4_delete_VLAN_ConfigEntry(void)
 {
@@ -3899,7 +3899,7 @@ void test_l1_vlan_hal_positive4_delete_VLAN_ConfigEntry(void)
 * Variations tested in this function:
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName | groupName = valid value | RETURN_OK | Should be successful |
+* | 01 | Invoking delete_VLAN_ConfigEntry with valid groupName = br_Name[4] | groupName = br_Name[4] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive5_delete_VLAN_ConfigEntry(void)
 {
@@ -4060,7 +4060,7 @@ void test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking get_vlanId_for_GroupName with valid groupName, vlanID = valid buffer | groupName = valid value, vlanID = valid buffer | RETURN_OK | Should be successful |
+* | 01 | Invoking get_vlanId_for_GroupName with valid groupName = br_Name[0], vlanID = valid buffer | groupName = br_Name[0], vlanID = valid buffer | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_get_vlanId_for_GroupName...");
@@ -4068,7 +4068,7 @@ void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void) {
     char vlanID[5] = {"\0"};
     int Vlan_Id = 0;
 
-    strcpy(groupName,br_Name[0]);
+    strcpy(groupName, br_Name[0]);
     UT_LOG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer: %s", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
 
@@ -4106,7 +4106,7 @@ void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking get_vlanId_for_GroupName with valid groupName, vlanID = valid buffer | groupName = valid value, vlanID = valid buffer | RETURN_OK | Should be successful |
+ * | 01 | Invoking get_vlanId_for_GroupName with valid groupName = br_Name[1], vlanID = valid buffer | groupName = br_Name[1], vlanID = valid buffer | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive2_get_vlanId_for_GroupName(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive2_get_vlanId_for_GroupName...");
@@ -4114,7 +4114,7 @@ void test_l1_vlan_hal_positive2_get_vlanId_for_GroupName(void) {
     char vlanID[5] = {"\0"};
     int Vlan_Id = 0;
     
-    strcpy(groupName,br_Name[1]);
+    strcpy(groupName, br_Name[1]);
     UT_LOG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
 
@@ -4152,7 +4152,7 @@ void test_l1_vlan_hal_positive2_get_vlanId_for_GroupName(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking get_vlanId_for_GroupName with valid groupName, vlanID = valid buffer  | groupName = valid value, vlanID = valid buffer | RETURN_OK | Should be successful |
+* | 01 | Invoking get_vlanId_for_GroupName with valid groupName = br_Name[2], vlanID = valid buffer  | groupName = br_Name[2], vlanID = valid buffer | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive3_get_vlanId_for_GroupName(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive3_get_vlanId_for_GroupName...");
@@ -4160,7 +4160,7 @@ void test_l1_vlan_hal_positive3_get_vlanId_for_GroupName(void) {
     char vlanID[5] = {"\0"};
     int Vlan_Id = 0;
 
-    strcpy(groupName,br_Name[2]);
+    strcpy(groupName, br_Name[2]);
     UT_LOG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
     
@@ -4199,7 +4199,7 @@ void test_l1_vlan_hal_positive3_get_vlanId_for_GroupName(void) {
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :--------------: | ----------- | --------- | --------------- | ----- |
- * | 01 | Invoking get_vlanId_for_GroupName with valid groupName, vlanID = valid buffer | groupName = valid value, vlanID = valid buffer | RETURN_OK | Should be successful |
+ * | 01 | Invoking get_vlanId_for_GroupName with valid groupName = br_Name[3], vlanID = valid buffer | groupName = br_Name[3], vlanID = valid buffer | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive4_get_vlanId_for_GroupName(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive4_get_vlanId_for_GroupName...");
@@ -4207,7 +4207,7 @@ void test_l1_vlan_hal_positive4_get_vlanId_for_GroupName(void) {
     char vlanID[5] = {"\0"};
     int Vlan_Id = 0;
 
-    strcpy(groupName,br_Name[3]);
+    strcpy(groupName, br_Name[3]);
     UT_LOG("Invoking get_vlanId_for_GroupName with input groupName: %s and vlanID buffer: %s", groupName, vlanID);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
    
@@ -4245,7 +4245,7 @@ void test_l1_vlan_hal_positive4_get_vlanId_for_GroupName(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking get_vlanId_for_GroupName API with a valid groupName, vlanID = valid buffer | groupName = valid value, vlanID = valid buffer | RETURN_OK | Should be successful |
+* | 01 | Invoking get_vlanId_for_GroupName API with a valid groupName = br_Name[4], vlanID = valid buffer | groupName = br_Name[4], vlanID = valid buffer | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive5_get_vlanId_for_GroupName(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive5_get_vlanId_for_GroupName...");
@@ -4253,7 +4253,7 @@ void test_l1_vlan_hal_positive5_get_vlanId_for_GroupName(void) {
     char vlanID[5] = {"\0"};
     int Vlan_Id = 0;
 
-    strcpy(groupName,br_Name[4]);
+    strcpy(groupName, br_Name[4]);
     UT_LOG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
 
@@ -4324,14 +4324,14 @@ void test_l1_vlan_hal_negative1_get_vlanId_for_GroupName(void) {
  *
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | --------------- | ----- |
- * | 01 | Invoking get_vlanId_for_GroupName with valid groupName, vlanID = NULL | groupName = valid value, vlanID = NULL | RETURN_ERR | Should Fail |
+ * | 01 | Invoking get_vlanId_for_GroupName with valid groupName = br_Name[0], vlanID = NULL | groupName = br_Name[0], vlanID = NULL | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative2_get_vlanId_for_GroupName(void) {
     UT_LOG("Entering test_l1_vlan_hal_negative2_get_vlanId_for_GroupName...");
     char groupName[64] = {"\0"};
     char *vlanID = NULL;
     
-    strcpy(groupName,br_Name[0]);
+    strcpy(groupName, br_Name[0]);
     UT_LOG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer: NULL", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
 
@@ -4421,7 +4421,7 @@ void test_l1_vlan_hal_negative4_get_vlanId_for_GroupName(void) {
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | --------------- | ----- |
-* | 01 | Invoking print_all_vlanId_Configuration | None | RETURN_OK | Should be successful |
+* | 01 |Invoke print_all_vlanId_Configuration and check if it succeeds | None | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive1_print_all_vlanId_Configuration(void)
 {
@@ -4453,7 +4453,7 @@ void test_l1_vlan_hal_positive1_print_all_vlanId_Configuration(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description                                                                                                      | Test Data                                                                  | Expected Result| Notes                |
 * | :----:           | -----------------------------------------------------------------------------------------------------------------| ---------------------------------------------------------------------------| -------------- | -------------------- |
-* | 01               | Invoking _get_shell_outputbuffer with cmd = valid linux shell command, out = Valud buffer, len = Valid value | cmd = valid linux shell command, out = Valud buffer, len = Valid value | None           | Should be successful |
+* | 01               | Invoking _get_shell_outputbuffer with cmd = valid linux shell command, out = valid buffer, len = valid value | cmd = valid linux shell command, out = valid buffer, len = valid value | None           | Should be successful |
 */
 void test_l1_vlan_hal_positive1_get_shell_outputbuffer(void) {
     UT_LOG("Entering test_l1_vlan_hal_positive1_get_shell_outputbuffer...");
@@ -4582,6 +4582,11 @@ void test_l1_vlan_hal_positive1_get_shell_outputbuffer_res( void )
             UT_PASS("Output string length validation failed");
         }
     }
+    else
+    {
+        UT_LOG("popen operation failed");
+        UT_FAIL("Fails to open the pipe");
+    }
     UT_LOG("Exiting test_l1_vlan_hal_positive1_get_shell_outputbuffer_res...");
 }
 
@@ -4613,7 +4618,6 @@ void test_l1_vlan_hal_negative1_get_shell_outputbuffer_res( void )
     UT_LOG("Invoking _get_shell_outputbuffer_res with invalid fp : NULL, out : valid buffer and len : valid value");
     _get_shell_outputbuffer_res(fp, out, len);
 
-    UT_PASS("_get_shell_outputbuffer validation success");
     UT_LOG("Exiting test_l1_vlan_hal_negative1_get_shell_outputbuffer_res...");
 }
 
@@ -4650,6 +4654,11 @@ void test_l1_vlan_hal_negative2_get_shell_outputbuffer_res( void )
         UT_PASS("_get_shell_outputbuffer validation success");
         UT_LOG("Exiting test_l1_vlan_hal_negative2_get_shell_outputbuffer_res...");
     }
+    else
+    {
+        UT_LOG("popen operation failed");
+        UT_FAIL("Fails to open the pipe");
+    }
 }
 
 static UT_test_suite_t * pSuite = NULL;
@@ -4667,8 +4676,8 @@ int register_hal_tests(void)
         return -1;
     }
     // List of test function names and strings
-   const char* list1[] = {"l1_vlan_hal_positive1_addGroup", "l1_vlan_hal_positive2_addGroup", "l1_vlan_hal_positive3_addGroup", "l1_vlan_hal_positive4_addGroup", "l1_vlan_hal_negative1_addGroup", "l1_vlan_hal_negative2_addGroup", "l1_vlan_hal_negative3_addGroup", "l1_vlan_hal_negative4_addGroup", "l1_vlan_hal_negative5_addGroup", "l1_vlan_hal_negative6_addGroup", "l1_vlan_hal_negative7_addGroup", "l1_vlan_hal_negative8_addGroup", "l1_vlan_hal_positive1_delGroup", "l1_vlan_hal_positive2_delGroup", "l1_vlan_hal_negative1_delGroup", "l1_vlan_hal_negative2_delGroup", "l1_vlan_hal_positive1_addInterface", "l1_vlan_hal_positive2_addInterface", "l1_vlan_hal_positive3_addInterface", "l1_vlan_hal_positive4_addInterface", "l1_vlan_hal_negative1_addInterface", "l1_vlan_hal_negative2_addInterface", "l1_vlan_hal_negative3_addInterface", "l1_vlan_hal_negative4_addInterface", "l1_vlan_hal_negative5_addInterface", "l1_vlan_hal_negative6_addInterface", "l1_vlan_hal_negative7_addInterface", "l1_vlan_hal_negative8_addInterface", "l1_vlan_hal_negative9_addInterface", "l1_vlan_hal_negative10_addInterface", "l1_vlan_hal_positive1_delInterface", "l1_vlan_hal_negative1_delInterface", "l1_vlan_hal_negative2_delInterface", "l1_vlan_hal_negative3_delInterface", "l1_vlan_hal_negative4_delInterface", "l1_vlan_hal_negative5_delInterface", "l1_vlan_hal_negative6_delInterface", "l1_vlan_hal_negative7_delInterface", "l1_vlan_hal_negative8_delInterface", "l1_vlan_hal_negative9_delInterface", "l1_vlan_hal_positive1_printGroup", "l1_vlan_hal_positive2_printGroup", "l1_vlan_hal_positive3_printGroup", "l1_vlan_hal_positive4_printGroup", "l1_vlan_hal_negative1_printGroup", "l1_vlan_hal_negative2_printGroup", "l1_vlan_hal_negative3_printGroup", "l1_vlan_hal_negative4_printGroup", "l1_vlan_hal_negative5_printGroup", "l1_vlan_hal_negative6_printGroup", "l1_vlan_hal_positive1_printAllGroup", "l1_vlan_hal_positive1_delete_all_Interfaces", "l1_vlan_hal_positive2_delete_all_Interfaces", "l1_vlan_hal_positive3_delete_all_Interfaces", "l1_vlan_hal_positive4_delete_all_Interfaces", "l1_vlan_hal_negative1_delete_all_Interfaces", "l1_vlan_hal_negative2_delete_all_Interfaces", "l1_vlan_hal_negative3_delete_all_Interfaces", "l1_vlan_hal_negative4_delete_all_Interfaces", "l1_vlan_hal_negative5_delete_all_Interfaces", "l1_vlan_hal_negative6_delete_all_Interfaces", "l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive4_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative5_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative6_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_positive3_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_positive1_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive2_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive3_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive4_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative1_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative2_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative4_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative5_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative6_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative7_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative8_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative9_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative10_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive1_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive2_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive3_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive4_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive5_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative1_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative2_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative3_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative4_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive1_get_vlanId_for_GroupName", "l1_vlan_hal_positive2_get_vlanId_for_GroupName", "l1_vlan_hal_positive3_get_vlanId_for_GroupName", "l1_vlan_hal_positive4_get_vlanId_for_GroupName", "l1_vlan_hal_positive5_get_vlanId_for_GroupName", "l1_vlan_hal_negative1_get_vlanId_for_GroupName", "l1_vlan_hal_negative2_get_vlanId_for_GroupName",  "l1_vlan_hal_negative3_get_vlanId_for_GroupName", "l1_vlan_hal_negative4_get_vlanId_for_GroupName", "l1_vlan_hal_positive1_print_all_vlanId_Configuration","l1_vlan_hal_positive1_get_shell_outputbuffer", "l1_vlan_hal_negative1_get_shell_outputbuffer","l1_vlan_hal_positive1_get_shell_outputbuffer_res", "l1_vlan_hal_negative1_get_shell_outputbuffer_res", "l1_vlan_hal_negative2_get_shell_outputbuffer_res"};
-   void (*list2[])() = {test_l1_vlan_hal_positive1_addGroup, test_l1_vlan_hal_positive2_addGroup, test_l1_vlan_hal_positive3_addGroup, test_l1_vlan_hal_positive4_addGroup, test_l1_vlan_hal_negative1_addGroup, test_l1_vlan_hal_negative2_addGroup, test_l1_vlan_hal_negative3_addGroup, test_l1_vlan_hal_negative4_addGroup, test_l1_vlan_hal_negative5_addGroup, test_l1_vlan_hal_negative6_addGroup, test_l1_vlan_hal_negative7_addGroup, test_l1_vlan_hal_negative8_addGroup, test_l1_vlan_hal_positive1_delGroup, test_l1_vlan_hal_positive2_delGroup, test_l1_vlan_hal_negative1_delGroup, test_l1_vlan_hal_negative2_delGroup, test_l1_vlan_hal_positive1_addInterface, test_l1_vlan_hal_positive2_addInterface, test_l1_vlan_hal_positive3_addInterface, test_l1_vlan_hal_positive4_addInterface, test_l1_vlan_hal_negative1_addInterface, test_l1_vlan_hal_negative2_addInterface, test_l1_vlan_hal_negative3_addInterface, test_l1_vlan_hal_negative4_addInterface, test_l1_vlan_hal_negative5_addInterface, test_l1_vlan_hal_negative6_addInterface, test_l1_vlan_hal_negative7_addInterface, test_l1_vlan_hal_negative8_addInterface, test_l1_vlan_hal_negative9_addInterface, test_l1_vlan_hal_negative10_addInterface, test_l1_vlan_hal_positive1_delInterface, test_l1_vlan_hal_negative1_delInterface, test_l1_vlan_hal_negative2_delInterface, test_l1_vlan_hal_negative3_delInterface, test_l1_vlan_hal_negative4_delInterface, test_l1_vlan_hal_negative5_delInterface, test_l1_vlan_hal_negative6_delInterface, test_l1_vlan_hal_negative7_delInterface, test_l1_vlan_hal_negative8_delInterface, test_l1_vlan_hal_negative9_delInterface, test_l1_vlan_hal_positive1_printGroup, test_l1_vlan_hal_positive2_printGroup, test_l1_vlan_hal_positive3_printGroup, test_l1_vlan_hal_positive4_printGroup, test_l1_vlan_hal_negative1_printGroup, test_l1_vlan_hal_negative2_printGroup, test_l1_vlan_hal_negative3_printGroup, test_l1_vlan_hal_negative4_printGroup, test_l1_vlan_hal_negative5_printGroup, test_l1_vlan_hal_negative6_printGroup, test_l1_vlan_hal_positive1_printAllGroup, test_l1_vlan_hal_positive1_delete_all_Interfaces, test_test_l1_vlan_hal_positive2_delete_all_Interfaces, test_l1_vlan_hal_positive3_delete_all_Interfaces, test_l1_vlan_hal_positive4_delete_all_Interfaces, test_l1_vlan_hal_negative1_delete_all_Interfaces, test_l1_vlan_hal_negative2_delete_all_Interfaces, test_l1_vlan_hal_negative3_delete_all_Interfaces, test_l1_vlan_hal_negative4_delete_all_Interfaces, test_l1_vlan_hal_negative5_delete_all_Interfaces, test_l1_vlan_hal_negative6_delete_all_Interfaces, test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive4_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative5_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative6_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge,  test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_positive3_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive3_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive4_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative10_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive2_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive3_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive4_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive5_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative3_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive1_get_vlanId_for_GroupName, test_l1_vlan_hal_positive2_get_vlanId_for_GroupName, test_l1_vlan_hal_positive3_get_vlanId_for_GroupName, test_l1_vlan_hal_positive4_get_vlanId_for_GroupName, test_l1_vlan_hal_positive5_get_vlanId_for_GroupName, test_l1_vlan_hal_negative1_get_vlanId_for_GroupName, test_l1_vlan_hal_negative2_get_vlanId_for_GroupName, test_l1_vlan_hal_negative3_get_vlanId_for_GroupName, test_l1_vlan_hal_negative4_get_vlanId_for_GroupName, test_l1_vlan_hal_positive1_print_all_vlanId_Configuration, test_l1_vlan_hal_positive1_get_shell_outputbuffer, test_l1_vlan_hal_negative1_get_shell_outputbuffer, test_l1_vlan_hal_positive1_get_shell_outputbuffer_res, test_l1_vlan_hal_negative1_get_shell_outputbuffer_res, test_l1_vlan_hal_negative2_get_shell_outputbuffer_res };
+   const char* list1[] = {"l1_vlan_hal_positive1_addGroup", "l1_vlan_hal_positive2_addGroup", "l1_vlan_hal_positive3_addGroup", "l1_vlan_hal_positive4_addGroup", "l1_vlan_hal_negative1_addGroup", "l1_vlan_hal_negative2_addGroup", "l1_vlan_hal_negative3_addGroup", "l1_vlan_hal_negative4_addGroup", "l1_vlan_hal_negative5_addGroup", "l1_vlan_hal_negative6_addGroup", "l1_vlan_hal_negative7_addGroup", "l1_vlan_hal_negative8_addGroup", "l1_vlan_hal_positive1_delGroup", "l1_vlan_hal_positive2_delGroup", "l1_vlan_hal_negative1_delGroup", "l1_vlan_hal_negative2_delGroup", "l1_vlan_hal_positive1_addInterface", "l1_vlan_hal_positive2_addInterface", "l1_vlan_hal_positive3_addInterface", "l1_vlan_hal_positive4_addInterface", "l1_vlan_hal_negative1_addInterface", "l1_vlan_hal_negative2_addInterface", "l1_vlan_hal_negative3_addInterface", "l1_vlan_hal_negative4_addInterface", "l1_vlan_hal_negative5_addInterface", "l1_vlan_hal_negative6_addInterface", "l1_vlan_hal_negative7_addInterface", "l1_vlan_hal_negative8_addInterface", "l1_vlan_hal_negative9_addInterface", "l1_vlan_hal_negative10_addInterface", "l1_vlan_hal_positive1_delInterface", "l1_vlan_hal_negative1_delInterface", "l1_vlan_hal_negative2_delInterface", "l1_vlan_hal_negative3_delInterface", "l1_vlan_hal_negative4_delInterface", "l1_vlan_hal_negative5_delInterface", "l1_vlan_hal_negative6_delInterface", "l1_vlan_hal_negative7_delInterface", "l1_vlan_hal_negative8_delInterface", "l1_vlan_hal_negative9_delInterface", "l1_vlan_hal_positive1_printGroup", "l1_vlan_hal_positive2_printGroup", "l1_vlan_hal_positive3_printGroup", "l1_vlan_hal_positive4_printGroup", "l1_vlan_hal_negative1_printGroup", "l1_vlan_hal_negative2_printGroup", "l1_vlan_hal_negative3_printGroup", "l1_vlan_hal_negative4_printGroup", "l1_vlan_hal_negative5_printGroup", "l1_vlan_hal_negative6_printGroup", "l1_vlan_hal_positive1_printAllGroup", "l1_vlan_hal_positive1_delete_all_Interfaces", "l1_vlan_hal_positive2_delete_all_Interfaces", "l1_vlan_hal_positive3_delete_all_Interfaces", "l1_vlan_hal_positive4_delete_all_Interfaces", "l1_vlan_hal_negative1_delete_all_Interfaces", "l1_vlan_hal_negative2_delete_all_Interfaces", "l1_vlan_hal_negative3_delete_all_Interfaces", "l1_vlan_hal_negative4_delete_all_Interfaces", "l1_vlan_hal_negative5_delete_all_Interfaces", "l1_vlan_hal_negative6_delete_all_Interfaces", "l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive4_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative5_is_this_group_available_in_linux_bridge", "l1_vlan_hal_negative6_is_this_group_available_in_linux_bridge", "l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge", "l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_positive3_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge", "l1_vlan_hal_positive1_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive2_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive3_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive4_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative1_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative2_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative3_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative4_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative5_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative6_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative7_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative8_insert_VLAN_ConfigEntry", "l1_vlan_hal_negative9_insert_VLAN_ConfigEntry", "l1_vlan_hal_positive1_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive2_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive3_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive4_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive5_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative1_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative2_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative3_delete_VLAN_ConfigEntry", "l1_vlan_hal_negative4_delete_VLAN_ConfigEntry", "l1_vlan_hal_positive1_get_vlanId_for_GroupName", "l1_vlan_hal_positive2_get_vlanId_for_GroupName", "l1_vlan_hal_positive3_get_vlanId_for_GroupName", "l1_vlan_hal_positive4_get_vlanId_for_GroupName", "l1_vlan_hal_positive5_get_vlanId_for_GroupName", "l1_vlan_hal_negative1_get_vlanId_for_GroupName", "l1_vlan_hal_negative2_get_vlanId_for_GroupName",  "l1_vlan_hal_negative3_get_vlanId_for_GroupName", "l1_vlan_hal_negative4_get_vlanId_for_GroupName", "l1_vlan_hal_positive1_print_all_vlanId_Configuration","l1_vlan_hal_positive1_get_shell_outputbuffer", "l1_vlan_hal_negative1_get_shell_outputbuffer","l1_vlan_hal_positive1_get_shell_outputbuffer_res", "l1_vlan_hal_negative1_get_shell_outputbuffer_res", "l1_vlan_hal_negative2_get_shell_outputbuffer_res"};
+   void (*list2[])() = {test_l1_vlan_hal_positive1_addGroup, test_l1_vlan_hal_positive2_addGroup, test_l1_vlan_hal_positive3_addGroup, test_l1_vlan_hal_positive4_addGroup, test_l1_vlan_hal_negative1_addGroup, test_l1_vlan_hal_negative2_addGroup, test_l1_vlan_hal_negative3_addGroup, test_l1_vlan_hal_negative4_addGroup, test_l1_vlan_hal_negative5_addGroup, test_l1_vlan_hal_negative6_addGroup, test_l1_vlan_hal_negative7_addGroup, test_l1_vlan_hal_negative8_addGroup, test_l1_vlan_hal_positive1_delGroup, test_l1_vlan_hal_positive2_delGroup, test_l1_vlan_hal_negative1_delGroup, test_l1_vlan_hal_negative2_delGroup, test_l1_vlan_hal_positive1_addInterface, test_l1_vlan_hal_positive2_addInterface, test_l1_vlan_hal_positive3_addInterface, test_l1_vlan_hal_positive4_addInterface, test_l1_vlan_hal_negative1_addInterface, test_l1_vlan_hal_negative2_addInterface, test_l1_vlan_hal_negative3_addInterface, test_l1_vlan_hal_negative4_addInterface, test_l1_vlan_hal_negative5_addInterface, test_l1_vlan_hal_negative6_addInterface, test_l1_vlan_hal_negative7_addInterface, test_l1_vlan_hal_negative8_addInterface, test_l1_vlan_hal_negative9_addInterface, test_l1_vlan_hal_negative10_addInterface, test_l1_vlan_hal_positive1_delInterface, test_l1_vlan_hal_negative1_delInterface, test_l1_vlan_hal_negative2_delInterface, test_l1_vlan_hal_negative3_delInterface, test_l1_vlan_hal_negative4_delInterface, test_l1_vlan_hal_negative5_delInterface, test_l1_vlan_hal_negative6_delInterface, test_l1_vlan_hal_negative7_delInterface, test_l1_vlan_hal_negative8_delInterface, test_l1_vlan_hal_negative9_delInterface, test_l1_vlan_hal_positive1_printGroup, test_l1_vlan_hal_positive2_printGroup, test_l1_vlan_hal_positive3_printGroup, test_l1_vlan_hal_positive4_printGroup, test_l1_vlan_hal_negative1_printGroup, test_l1_vlan_hal_negative2_printGroup, test_l1_vlan_hal_negative3_printGroup, test_l1_vlan_hal_negative4_printGroup, test_l1_vlan_hal_negative5_printGroup, test_l1_vlan_hal_negative6_printGroup, test_l1_vlan_hal_positive1_printAllGroup, test_l1_vlan_hal_positive1_delete_all_Interfaces, test_test_l1_vlan_hal_positive2_delete_all_Interfaces, test_l1_vlan_hal_positive3_delete_all_Interfaces, test_l1_vlan_hal_positive4_delete_all_Interfaces, test_l1_vlan_hal_negative1_delete_all_Interfaces, test_l1_vlan_hal_negative2_delete_all_Interfaces, test_l1_vlan_hal_negative3_delete_all_Interfaces, test_l1_vlan_hal_negative4_delete_all_Interfaces, test_l1_vlan_hal_negative5_delete_all_Interfaces, test_l1_vlan_hal_negative6_delete_all_Interfaces, test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive4_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative5_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_negative6_is_this_group_available_in_linux_bridge, test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge,  test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge, test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_positive2_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_positive3_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge, test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive3_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive4_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry, test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry, test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive2_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive3_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive4_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive5_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative3_delete_VLAN_ConfigEntry, test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry, test_l1_vlan_hal_positive1_get_vlanId_for_GroupName, test_l1_vlan_hal_positive2_get_vlanId_for_GroupName, test_l1_vlan_hal_positive3_get_vlanId_for_GroupName, test_l1_vlan_hal_positive4_get_vlanId_for_GroupName, test_l1_vlan_hal_positive5_get_vlanId_for_GroupName, test_l1_vlan_hal_negative1_get_vlanId_for_GroupName, test_l1_vlan_hal_negative2_get_vlanId_for_GroupName, test_l1_vlan_hal_negative3_get_vlanId_for_GroupName, test_l1_vlan_hal_negative4_get_vlanId_for_GroupName, test_l1_vlan_hal_positive1_print_all_vlanId_Configuration, test_l1_vlan_hal_positive1_get_shell_outputbuffer, test_l1_vlan_hal_negative1_get_shell_outputbuffer, test_l1_vlan_hal_positive1_get_shell_outputbuffer_res, test_l1_vlan_hal_negative1_get_shell_outputbuffer_res, test_l1_vlan_hal_negative2_get_shell_outputbuffer_res };
     // Add tests to the suite
     for (int i = 0; i < sizeof(list1) / sizeof(list1[0]); i++) {
         UT_add_test(pSuite, list1[i], list2[i]);
