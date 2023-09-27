@@ -2291,7 +2291,7 @@ void test_l1_vlan_hal_positive2_is_this_group_available_in_linux_bridge( void )
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data |Expected Result |Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name = br_name[64] | br_name = br_name[64] | RETURN_OK | Should be successful |
+* | 01 | Invoking _is_this_group_available_in_linux_bridge with valid br_name = br_name[2] | br_name = br_name[2] | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_hal_positive3_is_this_group_available_in_linux_bridge( void )
 {
