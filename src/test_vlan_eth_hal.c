@@ -214,7 +214,7 @@ int get_vlanName(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result  | Notes |
 * | :----------: | ---------- | --------- | ----------- | --------- |
-* | 01 | Initialize VLAN Ethernet HAL module |None | RETURN_OK | Should be successful |
+* | 01 | Invoke vlan_eth_hal_init which initializes VLAN Ethernet HAL module |None | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_init(void)
 {
@@ -230,9 +230,9 @@ void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_init(void)
 }
 
 /**
-* @brief This test case is used to verify the function reinitializes the VLAN HAL client with existing configuration.
+* @brief This test case is used to verify the functionality when API is called twice.
 *
-* The objective of this test is to ensure that the function `vlan_eth_hal_init()` is able to reinitialize the VLAN HAL client with an existing configuration.
+* The objective of this test is to ensure that the function `vlan_eth_hal_init()` called twice returns success.
 *
 * **Test Group ID:** Basic: 01 @n
 * **Test Case ID:** 002 @n
@@ -245,7 +245,7 @@ void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_init(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_init with existing configuration | None | RETURN_OK | Should be successful |
+* | 01 | Invoking vlan_eth_hal_init API twice | None | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_eth_hal_positive2_vlan_eth_hal_init(void)
 {
@@ -308,25 +308,27 @@ void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+
+            config->doReconfigure = FALSE;
+
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration of doReconfigure = FALSE");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_OK);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = FALSE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration of doReconfigure = FALSE");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
+
     }
     else
     {
@@ -379,22 +381,23 @@ void test_l1_vlan_eth_hal_positive2_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+
+            config->doReconfigure = TRUE;
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration of doReconfigure = TRUE");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_OK);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = TRUE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration of doReconfigure = TRUE");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -423,7 +426,7 @@ void test_l1_vlan_eth_hal_positive2_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoke vlan_eth_hal_configureInterface with existing configuration| valid configuration pointer | RETURN_OK | Should be successful |
+* | 01 | Invoke vlan_eth_hal_configureInterface API twice| config = valid configuration pointer | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface(void)
 {
@@ -449,27 +452,28 @@ void test_l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+            config->doReconfigure = TRUE;
+
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration ");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_OK);
+
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with existing configuration ");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_OK);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = TRUE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration ");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with existing configuration ");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -485,7 +489,7 @@ void test_l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface(void)
 /**
 * @brief This test case verifies the functionality of the vlan_eth_hal_configureInterface function.
 *
-* The objective of this test is to ensure that the vlan_eth_hal_configureInterface function works correctly by configuring the VLAN interface with minimum and maximum values of parameters.
+* The objective of this test is to ensure that the vlan_eth_hal_configureInterface function works correctly by configuring the VLAN interface with minimum values of parameters.
 *
 * **Test Group ID:** Basic: 01 @n
 * **Test Case ID:** 006 @n
@@ -498,8 +502,7 @@ void test_l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoke vlan_eth_hal_configureInterface with valid  minimum value of parameters| valid configuration pointer | RETURN_OK |Should be successful|
-* | 02 | Invoke vlan_eth_hal_configureInterface with valid maximum value of parameters| valid configuration pointer | RETURN_OK |Should be successful |
+* | 01 | Invoke vlan_eth_hal_configureInterface with valid minimum value of parameters| config = valid configuration pointer | RETURN_OK |Should be successful|
 */
 void test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface(void)
 {
@@ -535,46 +538,16 @@ void test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface(void)
 
             free(config->skb_config);
             config->skb_config = NULL;
-
-            //L2Name should be configured in vlan_eth_config file
-            strcpy(config->L2Interface, L2Name);
-            //L3Name should be configured in vlan_eth_config file
-            strcpy(config->L3Interface, L3Name);
-            config->VLANId = 4094;
-            config->TPId = 4294967295;
-            config->Status = VLAN_IF_UP;
-            config->skbMarkingNumOfEntries = 1;
-            config->skb_config = (vlan_skb_config_t *)malloc(sizeof(vlan_skb_config_t));
-            if (config->skb_config != NULL)
-            {
-                memset(config->skb_config, 0, sizeof(vlan_skb_config_t));
-                //alias should be configured in vlan_eth_config file
-                strcpy(config->skb_config->alias, alias);
-                config->skb_config->skbMark = 4294967295;
-                config->skb_config->skbPort = 4294967295;
-                config->skb_config->skbEthPriorityMark = 4294967295;
-
-                config->doReconfigure = TRUE;
-                UT_LOG("Invoking vlan_eth_hal_configureInterface with valid maximum value of parameters");
-                result = vlan_eth_hal_configureInterface(config);
-                UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-                UT_ASSERT_EQUAL(result, RETURN_OK);
-
-                free(config->skb_config);
-            }
-            else
-            {
-                UT_LOG("Malloc operation failed for skb_config (max value)");
-                UT_FAIL("Memory allocation with malloc failed for skb_config (max value)");
-            }
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config (min value)");
             UT_FAIL("Memory allocation with malloc failed for skb_config (min value)");
         }
-
         free(config);
+        config = NULL;
     }
     else
     {
@@ -585,6 +558,78 @@ void test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface(void)
     UT_LOG("Exiting test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface...");
 }
 
+/**
+* @brief This test case verifies the functionality of the vlan_eth_hal_configureInterface function.
+*
+* The objective of this test is to ensure that the vlan_eth_hal_configureInterface function works correctly by configuring the VLAN interface with maximum values of parameters.
+*
+* **Test Group ID:** Basic: 01 @n
+* **Test Case ID:** 007 @n
+* **Priority:** High @n@n
+*
+* **Pre-Conditions:** None @n
+* **Dependencies:** None @n
+* **User Interaction:** If the user chooses to run the test in interactive mode, then the test case has to be selected via the console. @n
+*
+* **Test Procedure:** @n
+* | Variation / Step | Description | Test Data | Expected Result | Notes |
+* | :----: | --------- | ---------- |-------------- | ----- |
+* | 01 | Invoke vlan_eth_hal_configureInterface with valid maximum value of parameters| config = valid configuration pointer | RETURN_OK |Should be successful |
+*/
+void test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface(void)
+{
+    UT_LOG("Entering test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface...");
+    int result = 0;
+    vlan_configuration_t *config = (vlan_configuration_t *)malloc(sizeof(vlan_configuration_t));
+    if (config != NULL)
+    {
+        memset(config, 0, sizeof(vlan_configuration_t));
+        //L2Name should be configured in vlan_eth_config file
+        strcpy(config->L2Interface, L2Name);
+        //L3Name should be configured in vlan_eth_config file
+        strcpy(config->L3Interface, L3Name);
+        config->VLANId = 4094;
+        config->TPId = 4294967295;
+        config->Status = VLAN_IF_UP;
+        config->skbMarkingNumOfEntries = 1;
+        config->skb_config = (vlan_skb_config_t *)malloc(sizeof(vlan_skb_config_t));
+        if (config->skb_config != NULL)
+        {
+            memset(config->skb_config, 0, sizeof(vlan_skb_config_t));
+            //alias should be configured in vlan_eth_config file
+            strcpy(config->skb_config->alias, alias);
+            config->skb_config->skbMark = 4294967295;
+            config->skb_config->skbPort = 4294967295;
+            config->skb_config->skbEthPriorityMark = 4294967295;
+
+            config->doReconfigure = TRUE;
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with valid maximum value of parameters");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_OK);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed for skb_config (max value)");
+            UT_FAIL("Memory allocation with malloc failed for skb_config (max value)");
+        }
+        free(config);
+        config = NULL;
+    }
+    else
+    {
+        UT_LOG("Malloc operation failed");
+        UT_FAIL("Memory allocation with malloc failed");
+    }
+
+    UT_LOG("Exiting test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface...");
+}
+
 
 /**
 * @brief Test case to verify the positive scenario of vlan_eth_hal_configureInterface function.
@@ -592,7 +637,7 @@ void test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface(void)
 * This test case validates the functionality of the vlan_eth_hal_configureInterface function when provided with different configuration status values.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 007 @n
+* **Test Case ID:** 008 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -602,11 +647,11 @@ void test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Set up the config values with different status values. | status = 1 to 7| RETURN_OK | Should be successful |
+* | 01 |Invoke vlan_eth_hal_configureInterface with different status values. | config = valid configuration pointer with config->Status ranging from 1 to 7| RETURN_OK | Should be successful |
 */
-void test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface(void)
+void test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface(void)
 {
-    UT_LOG("Entering test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface...");
+    UT_LOG("Entering test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface...");
     int i = 0 ;
     int result = 0;
     vlan_configuration_t *config = (vlan_configuration_t *)malloc(sizeof(vlan_configuration_t));
@@ -629,25 +674,25 @@ void test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+            config->doReconfigure = TRUE;
+            for(i = 1 ; i <= 7 ; i++)
+            {
+                config->Status = 1;
+                UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration ");
+                result = vlan_eth_hal_configureInterface(config);
+                UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+                UT_ASSERT_EQUAL(result, RETURN_OK);
+            }
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = TRUE;
-
-        for(i = 1 ; i <= 7 ; i++)
-        {
-            config->Status = 1;
-            UT_LOG("Invoking vlan_eth_hal_configureInterface with valid configuration ");
-            result = vlan_eth_hal_configureInterface(config);
-            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-            UT_ASSERT_EQUAL(result, RETURN_OK);
-        }
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -656,7 +701,7 @@ void test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface(void)
         UT_LOG("Malloc operation failed");
         UT_FAIL("Memory allocation with malloc failed");
     }
-    UT_LOG("Exiting test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface...");
+    UT_LOG("Exiting test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface...");
 }
 
 /**
@@ -665,7 +710,7 @@ void test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface(void)
 * This test case verifies the functionality of the vlan_eth_hal_configureInterface function by invoking it with valid configuration values. It checks if the function returns RETURN_OK as expected.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 008 @n
+* **Test Case ID:** 009 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -675,11 +720,11 @@ void test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_configureInterface to test SKB Configuration | valid configuration values with multiple valid SKB Configurations| RETURN_OK | Should be successful |
+* | 01 | Invoke vlan_eth_hal_configureInterface to test SKB Configuration | config = valid configuration values with multiple valid SKB Configurations| RETURN_OK | Should be successful |
 */
-void test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface(void)
+void test_l1_vlan_eth_hal_positive7_vlan_eth_hal_configureInterface(void)
 {
-    UT_LOG("Entering test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface...");
+    UT_LOG("Entering test_l1_vlan_eth_hal_positive7_vlan_eth_hal_configureInterface...");
     int result = 0;
     vlan_configuration_t *config = (vlan_configuration_t *)malloc(sizeof(vlan_configuration_t));
     if (config != NULL)
@@ -708,20 +753,23 @@ void test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface(void)
             config->skb_config[1].skbMark = 1;
             config->skb_config[1].skbPort = 1;
             config->skb_config[1].skbEthPriorityMark = 1;
+            config->doReconfigure = TRUE;
+
+            UT_LOG("Invoking vlan_eth_hal_configureInterface to test SKB Configuration ");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_OK);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
-            UT_LOG("Malloc operation failed");
-            UT_FAIL("Memory allocation with malloc failed");
+            UT_LOG("Malloc operation failed for skb_config");
+            UT_FAIL("Memory allocation with malloc failed for skb_config");
         }
-        config->doReconfigure = TRUE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface to test SKB Configuration ");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -731,7 +779,7 @@ void test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface(void)
         UT_FAIL("Memory allocation with malloc failed");
     }
 
-    UT_LOG("Exiting test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface...");
+    UT_LOG("Exiting test_l1_vlan_eth_hal_positive7_vlan_eth_hal_configureInterface...");
 }
 
 /**
@@ -740,7 +788,7 @@ void test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface(void)
 * The objective of this test is to ensure that the function returns the expected error code when invoked with a NULL pointer.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 009 @n
+* **Test Case ID:** 010 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -750,7 +798,7 @@ void test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 *  | Variation / Step | Description | Test Data | Expected Result | Notes |
 *  | :----: | --------- | ---------- | -------------- | ----- |
-*  | 01 | Invoking vlan_eth_hal_configureInterface with a NULL pointer for config | config = NULL | RETURN_ERR | Should be unsuccessful |
+*  | 01 | Invoke vlan_eth_hal_configureInterface with a NULL config pointer | config = NULL | RETURN_ERR | Should be unsuccessful |
 */
 void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface(void)
 {
@@ -772,7 +820,7 @@ void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface(void)
 * The purpose of this test is to verify that the function correctly handles an invalid VLAN ID and returns an error code.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 010 @n
+* **Test Case ID:** 011 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -782,7 +830,7 @@ void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Configure interface with invalid VLAN ID | invalid vlanID | RETURN_ERR | Should return an error |
+* | 01 | Invoke vlan_eth_hal_configureInterface with invalid VLAN ID | config->vlanID = invalid value| RETURN_ERR | Should return an error |
 */
 void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface(void)
 {
@@ -809,22 +857,23 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+
+            config->doReconfigure = TRUE;
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with invalid VLAN ID ");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_ERR);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = TRUE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with invalid VLAN ID ");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -843,7 +892,7 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface(void)
 * This test case verifies that the API returns an error when configuring the interface with an invalid status value.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 011 @n
+* **Test Case ID:** 012 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -853,7 +902,7 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_configureInterface with invalid status | config.Status = invalid | RETURN_ERR | Should return an error |
+* | 01 | Invoke vlan_eth_hal_configureInterface with invalid status | config->Status = invalid value | RETURN_ERR | Should return an error |
 */
 void test_l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface(void)
 {
@@ -880,22 +929,23 @@ void test_l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+
+            config->doReconfigure = TRUE;
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with invalid status");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_ERR);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = TRUE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with invalid status");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -914,7 +964,7 @@ void test_l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface(void)
 * This test case checks if the function returns an error when attempting to configure the VLAN interface with empty string values for L2Interface and L3Interface.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 012 @n
+* **Test Case ID:** 013 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -924,7 +974,7 @@ void test_l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | --------------- | ----- |
-* | 01 | Configure VLAN interface with empty L2Interface and L3Interface | L2Interface = "", L3Interface = "" | RETURN_ERR | Should return an error |
+* | 01 |Invoke vlan_eth_hal_configureInterface with empty L2Interface and L3Interface |config->L2Interface = "" , config->L3Interface = "" | RETURN_ERR | Should return an error |
 */
 void test_l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface(void)
 {
@@ -949,22 +999,23 @@ void test_l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface(void)
             config->skb_config->skbMark = 0;
             config->skb_config->skbPort = 0;
             config->skb_config->skbEthPriorityMark = 0;
+
+            config->doReconfigure = TRUE;
+            UT_LOG("Invoking vlan_eth_hal_configureInterface with empty L2Interface and L3Interface ");
+            result = vlan_eth_hal_configureInterface(config);
+            UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
+            UT_ASSERT_EQUAL(result, RETURN_ERR);
+
+            free(config->skb_config);
+            config->skb_config = NULL;
+            free(config);
+            config = NULL;
         }
         else
         {
             UT_LOG("Malloc operation failed for skb_config");
             UT_FAIL("Memory allocation with malloc failed for skb_config");
-            free(config);
-            config = NULL;
         }
-        config->doReconfigure = TRUE;
-
-        UT_LOG("Invoking vlan_eth_hal_configureInterface with empty L2Interface and L3Interface ");
-        result = vlan_eth_hal_configureInterface(config);
-        UT_LOG(" vlan_eth_hal_configureInterface returns: %d",result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-
-        free(config->skb_config);
         free(config);
         config = NULL;
     }
@@ -983,7 +1034,7 @@ void test_l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface(void)
 * The objective of this test is to ensure that the vlan_eth_hal_deleteInterface function correctly deassociates a VLAN interface.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 013 @n
+* **Test Case ID:** 014 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -993,7 +1044,7 @@ void test_l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_deleteInterface with valid interface name | valid interface name  | RETURN_OK | Should be successful |
+* | 01 | Invoke vlan_eth_hal_deleteInterface with valid interface name | vlan_ifname = valid value | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface(void)
 {
@@ -1017,7 +1068,7 @@ void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface(void)
 * This test case checks the behavior of the 'vlan_eth_hal_deleteInterface' function when the specified interface does not exist.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 014 @n
+* **Test Case ID:** 015 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1027,7 +1078,7 @@ void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description  | Test Data  | Expected Result | Notes  |
 * | :---------: | ------------ | -----------| --------- | --------|
-* | 01| Invoke vlan_eth_hal_deleteInterface with the specified interface does not exist.| Interface does not exist| RETURN_OK | Should be successful |
+* | 01| Invoke vlan_eth_hal_deleteInterface with the specified interface does not exist.|vlan_ifname = non-existing interface value| RETURN_OK | Should be successful |
 */
 void test_l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface(void)
 {
@@ -1049,7 +1100,7 @@ void test_l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface(void)
 * The objective of this test is to ensure that the function correctly handles the case when a null interface name is provided.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 015 @n
+* **Test Case ID:** 016 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1059,7 +1110,7 @@ void test_l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_deleteInterface with NULL interface name |  NULL interface name | RETURN_ERR | Should return error |
+* | 01 | Invoke vlan_eth_hal_deleteInterface with NULL interface name |vlan_ifname = NULL| RETURN_ERR | Should return error |
 */
 void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface(void)
 {
@@ -1081,7 +1132,7 @@ void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface(void)
 * The purpose of this test is to ensure that the function handles the empty string input correctly and returns RETURN_ERR as expected.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 016 @n
+* **Test Case ID:** 017 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1091,7 +1142,7 @@ void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_deleteInterface with empty interface name | empty interface name | RETURN_ERR | Should return an error |
+* | 01 | Invoke vlan_eth_hal_deleteInterface with empty interface name |vlan_ifname = ""| RETURN_ERR | Should return an error |
 */
 void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface(void)
 {
@@ -1114,7 +1165,7 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface(void)
 * The purpose of this test is to ensure that the vlan_eth_hal_getInterfaceStatus function with valid interface name ,returns RETURN_OK and a valid status.
 *
 * **Test Group ID:** Basic: 01  @n
-* **Test Case ID:** 017 @n
+* **Test Case ID:** 018 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1124,7 +1175,7 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- | -------------- | ----- |
-* | 01 | Invoking vlan_eth_hal_getInterfaceStatus with valid input parameters | valid Interface buffer, status = valid buffer | RETURN_OK | Should be successful |
+* | 01 | Invoke vlan_eth_hal_getInterfaceStatus with valid input parameters | vlan_ifname = valid value, status = valid buffer | RETURN_OK | Should be successful |
 */
 void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_getInterfaceStatus(void)
 {
@@ -1159,7 +1210,7 @@ void test_l1_vlan_eth_hal_positive1_vlan_eth_hal_getInterfaceStatus(void)
 * This test checks if the function correctly handles the case where the `vlan_ifname` argument is NULL.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 018 @n
+* **Test Case ID:** 019 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1193,7 +1244,7 @@ void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_getInterfaceStatus(void)
 * The objective of this test case is to verify that the function properly handles the scenario where a NULL status pointer is provided as an argument.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 019 @n
+* **Test Case ID:** 020 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1203,7 +1254,7 @@ void test_l1_vlan_eth_hal_negative1_vlan_eth_hal_getInterfaceStatus(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description  | Test Data | Expected Result  | Notes |
 * | :----------: | -------- | --------- | ----------- | -------- |
-* | 01 | Invoking vlan_eth_hal_getInterfaceStatus with null status and valid interface| valid interface buffer, Null status| RETURN_ERR | Should return error |
+* | 01 | Invoke vlan_eth_hal_getInterfaceStatus with null status and valid interface| vlan_ifname = valid value, status = NULL| RETURN_ERR | Should return error |
 */
 void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus(void)
 {
@@ -1228,7 +1279,7 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus(void)
 * The objective of this test is to check the return status of the API when a non-existent VLAN interface name is provided.
 *
 * **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 020 @n
+* **Test Case ID:** 021 @n
 * **Priority:** High @n@n
 *
 * **Pre-Conditions:** None @n
@@ -1238,7 +1289,7 @@ void test_l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus(void)
 * **Test Procedure:** @n
 * | Variation / Step | Description | Test Data | Expected Result | Notes |
 * | :----: | --------- | ---------- |-------------- | ----- |
-* | 01 | Verify the behavior of the API when a non-existent VLAN interface is provided | vlan_ifname = "wl0.100" | RETURN_ERR | Should be unsuccessful |
+* | 01 | Invoke vlan_eth_hal_getInterfaceStatus with non-existent VLAN interface |vlan_ifname = "wl0.100", status = valid buffer | RETURN_ERR | Should be unsuccessful |
 */
 void test_l1_vlan_eth_hal_negative3_vlan_eth_hal_getInterfaceStatus(void)
 {
@@ -1273,8 +1324,8 @@ int register_hal_tests(void)
         return -1;
     }
     // List of test function names and strings
-   const char* list1[] = {"l1_vlan_eth_hal_positive1_vlan_eth_hal_init", "l1_vlan_eth_hal_positive2_vlan_eth_hal_init", "l1_vlan_eth_hal_positive1_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive2_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_positive1_vlan_eth_hal_getInterfaceStatus", "l1_vlan_eth_hal_negative1_vlan_eth_hal_getInterfaceStatus", "l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus", "l1_vlan_eth_hal_negative3_vlan_eth_hal_getInterfaceStatus" };
-   void (*list2[])() = {test_l1_vlan_eth_hal_positive1_vlan_eth_hal_init, test_l1_vlan_eth_hal_positive2_vlan_eth_hal_init, test_l1_vlan_eth_hal_positive1_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive2_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_positive1_vlan_eth_hal_getInterfaceStatus, test_l1_vlan_eth_hal_negative1_vlan_eth_hal_getInterfaceStatus, test_l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus, test_l1_vlan_eth_hal_negative3_vlan_eth_hal_getInterfaceStatus };
+   const char* list1[] = {"l1_vlan_eth_hal_positive1_vlan_eth_hal_init", "l1_vlan_eth_hal_positive2_vlan_eth_hal_init", "l1_vlan_eth_hal_positive1_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive2_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive7_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface", "l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface", "l1_vlan_eth_hal_positive1_vlan_eth_hal_getInterfaceStatus", "l1_vlan_eth_hal_negative1_vlan_eth_hal_getInterfaceStatus", "l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus", "l1_vlan_eth_hal_negative3_vlan_eth_hal_getInterfaceStatus" };
+   void (*list2[])() = {test_l1_vlan_eth_hal_positive1_vlan_eth_hal_init, test_l1_vlan_eth_hal_positive2_vlan_eth_hal_init, test_l1_vlan_eth_hal_positive1_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive2_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive3_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive4_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive5_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive6_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive7_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative1_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative2_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative3_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_negative4_vlan_eth_hal_configureInterface, test_l1_vlan_eth_hal_positive1_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_positive2_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_negative1_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_negative2_vlan_eth_hal_deleteInterface, test_l1_vlan_eth_hal_positive1_vlan_eth_hal_getInterfaceStatus, test_l1_vlan_eth_hal_negative1_vlan_eth_hal_getInterfaceStatus, test_l1_vlan_eth_hal_negative2_vlan_eth_hal_getInterfaceStatus, test_l1_vlan_eth_hal_negative3_vlan_eth_hal_getInterfaceStatus };
     // Add tests to the suite
     for (int i = 0; i < sizeof(list1) / sizeof(list1[0]); i++)
     {
