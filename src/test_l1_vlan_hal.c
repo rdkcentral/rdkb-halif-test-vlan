@@ -27,7 +27,7 @@
  * **Pre-Conditions:**  None@n
  * **Dependencies:** None@n
  *
- * Ref to API Definition specification documentation : [VLANhalSpec.md.md](../../../docs/pages/VLANhalSpec.md)
+ * Ref to API Definition specification documentation : [halSpec.md](../../../docs/halSpec.md)
  */
 #include <ut.h>
 #include <ut_log.h>
@@ -277,11 +277,10 @@ void test_l1_vlan_hal_positive1_addGroup(void)
 
     char groupName[64] = {"\0"};
     const char default_vlanID[5] = "1";
-    int result = 0;
 
     strcpy(groupName, br_Name[0]);
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
 
     UT_LOG_DEBUG("vlan_hal_addGroup API returns : %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -314,10 +313,9 @@ void test_l1_vlan_hal_positive2_addGroup(void)
 
     char groupName[64] = "brlan5";
     const char default_vlanID[15] = "200";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid dgroupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
 
     UT_LOG_DEBUG("vlan_hal_addGroup api returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -350,10 +348,9 @@ void test_l1_vlan_hal_positive3_addGroup(void)
 
     char groupName[64] = "brlan10";
     const char default_vlanID[5] = "4094";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
 
     UT_LOG_DEBUG("vlan_hal_addGroup API returns : %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -386,11 +383,10 @@ void test_l1_vlan_hal_positive4_addGroup(void)
 
     char groupName[64] = {"\0"};
     const char default_vlanID[5] = "1";
-    int result = 0;
 
     strcpy(groupName, br_Name[0]);
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with groupName: %s, default_vlanID: %s", groupName, default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
     UT_LOG_DEBUG("Return Value: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
 
@@ -427,10 +423,9 @@ void test_l1_vlan_hal_negative1_addGroup(void)
 
     char groupName[64] = "";
     const char default_vlanID[5] = "1";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with invalid groupName: Empty string and default_vlanID: %s", default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
 
     UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -463,18 +458,16 @@ void test_l1_vlan_hal_negative2_addGroup(void)
     int i = 0;
     char groupName[64] = {"\0"};
     const char default_vlanID[5] = "";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: Empty string ", groupName);
-        result = vlan_hal_addGroup(groupName, default_vlanID);
+        int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -504,10 +497,9 @@ void test_l1_vlan_hal_negative3_addGroup(void)
 
     char groupName[64] = "brlanXYZ";
     const char default_vlanID[5] = "1";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with invalid groupName: %s and valid default_vlanID: %s", groupName, default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
 
     UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -541,18 +533,16 @@ void test_l1_vlan_hal_negative4_addGroup(void)
     int i = 0;
     char groupName[64] = {"\0"};
     const char default_vlanID[5] = "0";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: %s", groupName, default_vlanID);
-        result = vlan_hal_addGroup(groupName, default_vlanID);
+        int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -584,18 +574,16 @@ void test_l1_vlan_hal_negative5_addGroup(void)
     int i = 0;
     char groupName[64] = {"\0"};
     const char default_vlanID[5] = "-1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: %s", groupName, default_vlanID);
-        result = vlan_hal_addGroup(groupName, default_vlanID);
+        int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -626,18 +614,16 @@ void test_l1_vlan_hal_negative6_addGroup(void)
     int i = 0;
     char groupName[64] = {"\0"};
     const char default_vlanID[5] = "4095";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: %s", groupName, default_vlanID);
-        result = vlan_hal_addGroup(groupName, default_vlanID);
+        int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -667,10 +653,9 @@ void test_l1_vlan_hal_negative7_addGroup(void)
 
     const char *groupName = NULL;
     const char default_vlanID[5] = "1";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with invalid groupName: NULL and valid default_vlanID: %s", default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
+    int result = vlan_hal_addGroup(groupName, default_vlanID);
 
     UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -705,15 +690,13 @@ void test_l1_vlan_hal_negative8_addGroup(void)
     int i = 0;
     char groupName[64] = {"\0"};
     const char *default_vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: NULL", groupName);
-        result = vlan_hal_addGroup(groupName, default_vlanID);
+        int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -745,10 +728,9 @@ void test_l1_vlan_hal_positive1_delGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlan5";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delGroup with valid groupName: %s", groupName);
-    result = vlan_hal_delGroup(groupName);
+    int result = vlan_hal_delGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -781,10 +763,9 @@ void test_l1_vlan_hal_positive2_delGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlanXYZ";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delGroup with invalid groupName: %s", groupName);
-    result = vlan_hal_delGroup(groupName);
+    int result = vlan_hal_delGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -816,10 +797,9 @@ void test_l1_vlan_hal_negative1_delGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delGroup with invalid groupName: Empty String");
-    result = vlan_hal_delGroup(groupName);
+    int result = vlan_hal_delGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -851,10 +831,9 @@ void test_l1_vlan_hal_negative2_delGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delGroup with invalid groupName: NULL");
-    result = vlan_hal_delGroup(groupName);
+    int result = vlan_hal_delGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delGroup API: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -890,18 +869,16 @@ void test_l1_vlan_hal_positive1_addInterface(void)
     char ifName[64] = {"\0"};
     const char vlanID[5] = "1";
     strcpy(ifName, if_Name[0]);
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and vlanID: %s", groupName, ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -933,18 +910,16 @@ void test_l1_vlan_hal_negative1_addInterface(void)
     char groupName[64] = "";
     char ifName[64] = {"\0"};
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with invalid groupName: Empty string, valid ifName: %s and vlanID: %s", groupName, ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -976,18 +951,16 @@ void test_l1_vlan_hal_negative2_addInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = "";
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, invalid ifName: Empty String and valid vlanID: %s", groupName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1019,16 +992,14 @@ void test_l1_vlan_hal_negative3_addInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: Empty string", groupName, ifName);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -1063,18 +1034,16 @@ void test_l1_vlan_hal_negative4_addInterface(void)
     char groupName[64] = "brlanXYZ";
     char ifName[64] = {"\0"};
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with invalid groupName: %s, valid ifName: %s and vlanID: %s", groupName, ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1107,19 +1076,17 @@ void test_l1_vlan_hal_negative5_addInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "0";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: %s", groupName, ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -1152,19 +1119,17 @@ void test_l1_vlan_hal_negative6_addInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "-1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: %s", groupName, ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -1197,19 +1162,17 @@ void test_l1_vlan_hal_negative7_addInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "4095";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: %s", groupName, ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -1242,18 +1205,16 @@ void test_l1_vlan_hal_negative8_addInterface(void)
     const char *groupName = NULL;
     char ifName[64] = {"\0"};
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with invalid groupName: NULL, valid ifName: %s and vlanID: %s", ifName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -1286,18 +1247,16 @@ void test_l1_vlan_hal_negative9_addInterface(void)
     char groupName[64] = {"\0"};
     const char *ifName = NULL;
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, invalid ifName: NULL and vlanID: %s", groupName, vlanID);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -1330,19 +1289,17 @@ void test_l1_vlan_hal_negative10_addInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char *vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: NULL", groupName, ifName);
-        result = vlan_hal_addInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1374,18 +1331,16 @@ void test_l1_vlan_hal_positive1_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = "ethXYZ";
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s, vlanID=%s", groupName, ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1417,18 +1372,16 @@ void test_l1_vlan_hal_negative1_delInterface(void)
     char groupName[64] = "";
     char ifName[64] = {"\0"};
     const char vlanID[64] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with invalid groupName = Empty string, ifName = %s, vlanID = %s", ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1461,18 +1414,16 @@ void test_l1_vlan_hal_negative2_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = "";
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, invalid ifName=Empty string and valid vlanID=%s", groupName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1506,19 +1457,17 @@ void test_l1_vlan_hal_negative3_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[64] = "";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=Empty string", groupName, ifName);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("Return value: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1550,19 +1499,17 @@ void test_l1_vlan_hal_negative4_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "0";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=%s", groupName, ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1594,19 +1541,17 @@ void test_l1_vlan_hal_negative5_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "-1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=%s", groupName, ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1638,19 +1583,17 @@ void test_l1_vlan_hal_negative6_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char vlanID[5] = "4095";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=%s", groupName, ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1685,18 +1628,16 @@ void test_l1_vlan_hal_negative7_delInterface(void)
     const char *groupName = NULL;
     char ifName[64] = {"\0"};
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with invalid groupName=NULL and valid ifName=%s, vlanID=%s", ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1728,17 +1669,15 @@ void test_l1_vlan_hal_negative8_delInterface(void)
     char groupName[64] = {"\0"};
     const char *ifName = NULL;
     const char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, invalid ifName=NULL and valid vlanID=%s", groupName, ifName, vlanID);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1771,19 +1710,17 @@ void test_l1_vlan_hal_negative9_delInterface(void)
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
     const char *vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=NULL", groupName, ifName);
-        result = vlan_hal_delInterface(groupName, ifName, vlanID);
+        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1812,18 +1749,16 @@ void test_l1_vlan_hal_positive1_printGroup(void)
 
     int i = 0;
     char groupName[64] = {"\0"};
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_printGroup with valid groupName = %s", groupName);
-        result = vlan_hal_printGroup(groupName);
+        int result = vlan_hal_printGroup(groupName);
 
         UT_LOG_DEBUG("vlan_hal_printGroup returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1852,10 +1787,9 @@ void test_l1_vlan_hal_negative1_printGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_printGroup with invalid groupName = %s", groupName);
-    result = vlan_hal_printGroup(groupName);
+    int result = vlan_hal_printGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_printGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -1887,10 +1821,9 @@ void test_l1_vlan_hal_negative2_printGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char groupName[64] = "1234";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_printGroup with invalid groupName = %s", groupName);
-    result = vlan_hal_printGroup(groupName);
+    int result = vlan_hal_printGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_printGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -1922,10 +1855,9 @@ void test_l1_vlan_hal_negative3_printGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlan@10";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_printGroup with invalid groupName = %s", groupName);
-    result = vlan_hal_printGroup(groupName);
+    int result = vlan_hal_printGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_printGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -1957,10 +1889,9 @@ void test_l1_vlan_hal_negative4_printGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_printGroup with invalid groupName = %s", groupName);
-    result = vlan_hal_printGroup(groupName);
+    int result = vlan_hal_printGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_printGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -1994,10 +1925,9 @@ void test_l1_vlan_hal_negative5_printGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlanXYZ";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_printGroup with invalid groupName = %s", groupName);
-    result = vlan_hal_printGroup(groupName);
+    int result = vlan_hal_printGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_printGroup API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2029,10 +1959,9 @@ void test_l1_vlan_hal_negative6_printGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char groupName[64] = "bRLaN0";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_printGroup with invalid groupName = %s", groupName);
-    result = vlan_hal_printGroup(groupName);
+    int result = vlan_hal_printGroup(groupName);
 
     UT_LOG_DEBUG("vlan_hal_printGroup returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2063,10 +1992,8 @@ void test_l1_vlan_hal_positive1_printAllGroup(void)
     gTestID = 45;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    int result = 0;
-
     UT_LOG_DEBUG("Invoking vlan_hal_printAllGroup.");
-    result = vlan_hal_printAllGroup();
+    int result = vlan_hal_printAllGroup();
 
     UT_LOG_DEBUG("vlan_hal_printAllGroup API returns : %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -2098,18 +2025,16 @@ void test_l1_vlan_hal_positive1_delete_all_Interfaces(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     int i = 0;
     char groupName[64] = {"\0"};
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with valid groupName: %s", groupName);
-        result = vlan_hal_delete_all_Interfaces(groupName);
+        int result = vlan_hal_delete_all_Interfaces(groupName);
 
         UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2137,10 +2062,9 @@ void test_l1_vlan_hal_negative1_delete_all_Interfaces(void)
     gTestID = 47;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char groupName[64] = "";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: Empty string");
-    result = vlan_hal_delete_all_Interfaces(groupName);
+    int result = vlan_hal_delete_all_Interfaces(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2172,10 +2096,9 @@ void test_l1_vlan_hal_negative2_delete_all_Interfaces(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "1234";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    result = vlan_hal_delete_all_Interfaces(groupName);
+    int result = vlan_hal_delete_all_Interfaces(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2207,10 +2130,9 @@ void test_l1_vlan_hal_negative3_delete_all_Interfaces(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlan@10";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    result = vlan_hal_delete_all_Interfaces(groupName);
+    int result = vlan_hal_delete_all_Interfaces(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2242,10 +2164,9 @@ void test_l1_vlan_hal_negative4_delete_all_Interfaces(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: NULL");
-    result = vlan_hal_delete_all_Interfaces(groupName);
+    int result = vlan_hal_delete_all_Interfaces(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2278,10 +2199,9 @@ void test_l1_vlan_hal_negative5_delete_all_Interfaces(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlanXYZ";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    result = vlan_hal_delete_all_Interfaces(groupName);
+    int result = vlan_hal_delete_all_Interfaces(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2313,10 +2233,9 @@ void test_l1_vlan_hal_negative6_delete_all_Interfaces(void)
     gTestID = 52;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char groupName[64] = "bRLaN0";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    result = vlan_hal_delete_all_Interfaces(groupName);
+    int result = vlan_hal_delete_all_Interfaces(groupName);
 
     UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2349,18 +2268,16 @@ void test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge(void)
 
     int i = 0;
     char br_name[64] = {"\0"};
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with valid br_name: %s", br_name);
-        result = _is_this_group_available_in_linux_bridge(br_name);
+        int result = _is_this_group_available_in_linux_bridge(br_name);
 
         UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2390,10 +2307,9 @@ void test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char br_name[64] = "";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with invalid br_name:Empty String");
-    result = _is_this_group_available_in_linux_bridge(br_name);
+    int result = _is_this_group_available_in_linux_bridge(br_name);
 
     UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2425,10 +2341,9 @@ void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char br_name[64] = "1234";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with invalid br_name: %s", br_name);
-    result = _is_this_group_available_in_linux_bridge(br_name);
+    int result = _is_this_group_available_in_linux_bridge(br_name);
 
     UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2459,10 +2374,9 @@ void test_l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge(void)
     gTestID = 56;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char br_name[64] = "brlan@10";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with invalid br_name: %s", br_name);
-    result = _is_this_group_available_in_linux_bridge(br_name);
+    int result = _is_this_group_available_in_linux_bridge(br_name);
 
     UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2493,10 +2407,9 @@ void test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge(void)
     gTestID = 57;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char *br_name = NULL;
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with invalid br_name: NULL");
-    result = _is_this_group_available_in_linux_bridge(br_name);
+    int result = _is_this_group_available_in_linux_bridge(br_name);
 
     UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2527,10 +2440,9 @@ void test_l1_vlan_hal_negative5_is_this_group_available_in_linux_bridge(void)
     gTestID = 58;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char br_name[64] = "brlanXYZ";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with invalid br_name: %s", br_name);
-    result = _is_this_group_available_in_linux_bridge(br_name);
+    int result = _is_this_group_available_in_linux_bridge(br_name);
 
     UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2561,10 +2473,9 @@ void test_l1_vlan_hal_negative6_is_this_group_available_in_linux_bridge(void)
     gTestID = 59;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char br_name[64] = "bRLaN0";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_group_available_in_linux_bridge with invalid br_name: %s", br_name);
-    result = _is_this_group_available_in_linux_bridge(br_name);
+    int result = _is_this_group_available_in_linux_bridge(br_name);
 
     UT_LOG_DEBUG("_is_this_group_available_in_linux_bridge API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2599,17 +2510,15 @@ void test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid parameters ifName: %s, vlanID: %s", ifName, vlanID);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2641,18 +2550,16 @@ void test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid parameters ifName: %s, vlanID: %s", ifName, vlanID);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2683,18 +2590,16 @@ void test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "4094";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid parameters ifName: %s, vlanID: %s", ifName, vlanID);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2723,10 +2628,9 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge(void
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char ifName[64] = "";
     char vlanID[5] = "10";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with invalid ifName: Empty string, vlanID: %s", vlanID);
-    result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+    int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
     UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2760,18 +2664,16 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: Empty string", ifName);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2802,18 +2704,16 @@ void test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "0";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: %s", ifName, vlanID);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2844,18 +2744,16 @@ void test_l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "4095";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: %s", ifName, vlanID);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2885,10 +2783,9 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge(void
 
     char *ifName = NULL;
     char vlanID[5] = "10";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with invalid ifName: NULL and valid vlanID: %s", vlanID);
-    result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+    int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
     UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -2923,18 +2820,16 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char *vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: NULL", ifName);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2965,18 +2860,16 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge(void
     int i = 0;
     char ifName[64] = {"\0"};
     char vlanID[5] = "abc";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: %s", ifName, vlanID);
-        result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
+        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3008,19 +2901,17 @@ void test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and vlanID = %s", ifName, br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API retuns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3052,18 +2943,16 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = "";
     char br_name[64] = {"\0"};
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with invalid ifName = Empty string, valid br_name = %s and vlanID = %s", br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3095,18 +2984,16 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char br_name[64] = "";
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, invalid br_name = Empty string and valid vlanID = %s", ifName, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3138,19 +3025,17 @@ void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
     char vlanID[5] = "";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = Empty string", ifName, br_name);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3182,19 +3067,17 @@ void test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
     char vlanID[5] = "0";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = %s", ifName, br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3226,19 +3109,17 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
     char vlanID[64] = "4095";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = %s", ifName, br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3270,18 +3151,16 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridg
     char *ifName = NULL;
     char br_name[64] = {"\0"};
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with invalid ifName = NULL, valid br_name = %s and vlanID = %s", br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3313,18 +3192,16 @@ void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char *br_name = NULL;
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, invalid br_name = NULL and valid vlanID = %s", ifName, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3356,19 +3233,17 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridg
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
     char *vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = NULL", ifName, br_name);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3400,18 +3275,16 @@ void test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_brid
     char ifName[64] = {"\0"};
     char br_name[64] = "brl@n0";
     char vlanID[5] = "10";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, invalid br_name = %s anf valid vlanID = %s", ifName, br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3443,19 +3316,17 @@ void test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_brid
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
     char vlanID[5] = "abc";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid f_name = %s, br_name = %s and invalid vlanID = %s", ifName, br_name, vlanID);
-        result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
+        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API retuns: %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -3487,18 +3358,16 @@ void test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "100";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3529,18 +3398,16 @@ void test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "1";
-    int result = 0;
 
     for (i = 0; i < num_ifName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns : %d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3569,10 +3436,9 @@ void test_l1_vlan_hal_positive3_insert_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char groupName[64] = "brlan403";
     char vlanID[5] = "4094";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-    result = insert_VLAN_ConfigEntry(groupName, vlanID);
+    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
     UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns : %d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -3604,10 +3470,9 @@ void test_l1_vlan_hal_positive4_insert_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char groupName[64] = "brlan7";
     char vlanID[5] = "2000";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-    result = insert_VLAN_ConfigEntry(groupName, vlanID);
+    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
     UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
@@ -3640,10 +3505,9 @@ void test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char *groupName = NULL;
     char vlanID[5] = "100";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: NULL and valid vlanID: %s", vlanID);
-    result = insert_VLAN_ConfigEntry(groupName, vlanID);
+    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
     UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -3677,18 +3541,16 @@ void test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char *vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid vlanID: NULL", groupName);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3718,10 +3580,9 @@ void test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry(void)
 
     char groupName[64] = "";
     char vlanID[5] = "100";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: Empty string and valid vlanID: %s", vlanID);
-    result = insert_VLAN_ConfigEntry(groupName, vlanID);
+    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
     UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -3755,18 +3616,16 @@ void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid vlanID: Empty string", groupName);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3796,10 +3655,9 @@ void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void)
 
     char groupName[64] = "brlan114";
     char vlanID[5] = "100";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: %s and valid vlanID: %s", groupName, vlanID);
-    result = insert_VLAN_ConfigEntry(groupName, vlanID);
+    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
     UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -3833,18 +3691,16 @@ void test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "0";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid vlanID: %s", groupName, vlanID);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3875,18 +3731,16 @@ void test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "-1";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid lanID: %s", groupName, vlanID);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3917,18 +3771,16 @@ void test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "5000";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %sa and invalid vlanID: %s", groupName, vlanID);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3959,18 +3811,16 @@ void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char vlanID[5] = "1a2b";
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid vlanID: %s", groupName, vlanID);
-        result = insert_VLAN_ConfigEntry(groupName, vlanID);
+        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_ERR);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -4000,18 +3850,16 @@ void test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry(void)
 
     int i = 0;
     char groupName[64] = {"\0"};
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with valid groupName:%s", groupName);
-        result = delete_VLAN_ConfigEntry(groupName);
+        int result = delete_VLAN_ConfigEntry(groupName);
 
         UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -4040,10 +3888,9 @@ void test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName: Empty string");
-    result = delete_VLAN_ConfigEntry(groupName);
+    int result = delete_VLAN_ConfigEntry(groupName);
 
     UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4075,10 +3922,9 @@ void test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char *groupName = NULL;
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName: NULL");
-    result = delete_VLAN_ConfigEntry(groupName);
+    int result = delete_VLAN_ConfigEntry(groupName);
 
     UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4110,10 +3956,9 @@ void test_l1_vlan_hal_negative3_delete_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brlan115";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName:%s", groupName);
-    result = delete_VLAN_ConfigEntry(groupName);
+    int result = delete_VLAN_ConfigEntry(groupName);
 
     UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4145,10 +3990,9 @@ void test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "brla";
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName:%s", groupName);
-    result = delete_VLAN_ConfigEntry(groupName);
+    int result = delete_VLAN_ConfigEntry(groupName);
 
     UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4183,20 +4027,18 @@ void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void)
     char groupName[64] = {"\0"};
     char vlanID[5] = {"\0"};
     int Vlan_Id = 0;
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer: %s", groupName);
-        result = get_vlanId_for_GroupName(groupName, vlanID);
+        int result = get_vlanId_for_GroupName(groupName, vlanID);
 
         UT_LOG_DEBUG("get_vlanId_for_GroupName API returns: %d", result);
         Vlan_Id = atoi(vlanID);
         UT_LOG_DEBUG("vlanID = %d", Vlan_Id);
-        UT_ASSERT_NOT_EQUAL_FATAL(result, RETURN_OK);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
 
         if (Vlan_Id >= 1 && Vlan_Id <= 4094)
         {
@@ -4237,10 +4079,9 @@ void test_l1_vlan_hal_negative1_get_vlanId_for_GroupName(void)
 
     const char *groupName = NULL;
     char vlanID[5] = {"\0"};
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with invalid groupName: %s and valid vlanID buffer", groupName);
-    result = get_vlanId_for_GroupName(groupName, vlanID);
+    int result = get_vlanId_for_GroupName(groupName, vlanID);
 
     UT_LOG_DEBUG("get_vlanId_for_GroupName API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4275,15 +4116,13 @@ void test_l1_vlan_hal_negative2_get_vlanId_for_GroupName(void)
     int i = 0;
     char groupName[64] = {"\0"};
     char *vlanID = NULL;
-    int result = 0;
 
     for (i = 0; i < num_brName; i++)
     {
-        result = 0;
         strcpy(groupName, br_Name[i]);
 
         UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with valid groupName: %s and vlanID buffer: NULL", groupName);
-        result = get_vlanId_for_GroupName(groupName, vlanID);
+        int result = get_vlanId_for_GroupName(groupName, vlanID);
 
         UT_LOG_DEBUG("get_vlanId_for_GroupName API returns: %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4316,10 +4155,9 @@ void test_l1_vlan_hal_negative3_get_vlanId_for_GroupName(void)
 
     char groupName[64] = "";
     char vlanID[5] = {"\0"};
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with input groupName: %s and vlanID buffer: %s", groupName, vlanID);
-    result = get_vlanId_for_GroupName(groupName, vlanID);
+    int result = get_vlanId_for_GroupName(groupName, vlanID);
 
     UT_LOG_DEBUG("get_vlanId_for_GroupName API returns:%d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4352,10 +4190,9 @@ void test_l1_vlan_hal_negative4_get_vlanId_for_GroupName(void)
 
     char groupName[64] = "brlan114";
     char vlanID[5] = {"\0"};
-    int result = 0;
 
     UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with invalid groupName: %s and valid vlanID buffer", groupName);
-    result = get_vlanId_for_GroupName(groupName, vlanID);
+    int result = get_vlanId_for_GroupName(groupName, vlanID);
 
     UT_LOG_DEBUG("get_vlanId_for_GroupName API returns: %d", result);
     UT_ASSERT_EQUAL(result, RETURN_ERR);
@@ -4386,10 +4223,8 @@ void test_l1_vlan_hal_positive1_print_all_vlanId_Configuration(void)
     gTestID = 104;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    int result = 0;
-
     UT_LOG_DEBUG("Invoking print_all_vlanId_Configuration");
-    result = print_all_vlanId_Configuration();
+    int result = print_all_vlanId_Configuration();
 
     UT_LOG_DEBUG("print_all_vlanId_Configuration API returns :%d", result);
     UT_ASSERT_EQUAL(result, RETURN_OK);
