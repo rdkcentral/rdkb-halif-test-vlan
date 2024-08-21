@@ -1,0 +1,13 @@
+# Temporary VLAN configuration file defined for testing purposes only.
+vlan:
+  config:
+    if_Name:
+      - ""
+      - ""
+      - ""
+      - ""
+    br_Name:
+      - ""
+      - ""
+      - ""
+      - ""

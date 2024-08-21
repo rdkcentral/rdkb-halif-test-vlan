@@ -19,17 +19,15 @@
 # * limitations under the License.
 # *
 
-# PLEASE RUN THIS SCRIPT FROM INSIDE THE docs/ DIR SO THAT RELATIVE PATHS SET IN Doxyfile.cfg WORK AS EXPECTED
-
 # In the future this should moved to a fixed verison
-HAL_GENERATOR_VERSION=develop
+HAL_GENERATOR_VERSION=1.2.0
 
 # This will look up the last tag in the git repo, depending on the project this may require modification
 PROJECT_VERSION=$(git describe --tags | head -n1)
 
 # Check if the common document configuration is present, if not clone it
 if [ -d "./build" ]; then
-    make -C ./build PROJECT_NAME="VLAN HAL" PROJECT_VERSION=${PROJECT_VERSION}
+    make -C ./build PROJECT_NAME="RDK-B VLAN HAL" PROJECT_VERSION=${PROJECT_VERSION}
 else
     echo "Cloning Common documentation generation"
     git clone git@github.com:rdkcentral/hal-doxygen.git build
