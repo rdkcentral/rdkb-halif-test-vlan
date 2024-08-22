@@ -1616,14 +1616,26 @@ void test_l1_vlan_hal_negative2_printGroup(void)
 {
     gTestID = 40;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-    char *invalid_brName[] = {
-        "1234",
-        "brlan@10",
-        "brlanXYZ",
-        "bRLaN0"};
+    int count;
     char groupName[64];
-    int i = 0;
+    char **invalid_brName;
+    char invalid_brNamex[MAX_SIZE];
+    int i;
     int result = 0;
+
+    // Get the count of invalid_brName entries
+    count = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
+    printf("Checking invalid_brName list count: %d \n", count);
+
+    // Allocate memory for invalid_brName array
+    invalid_brName = (char **)malloc(count * sizeof(char *));
+    for (i = 0; i < count; i++)
+    {
+        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
+        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
+        printf("%s \n", invalid_brName[i]);
+    }
 
     for (i = 0; i < 4; i++)
     {
@@ -1637,6 +1649,12 @@ void test_l1_vlan_hal_negative2_printGroup(void)
 
         UT_LOG_INFO("Out %s\n", __FUNCTION__);
     }
+    // Free the allocated memory
+    for (i = 0; i < count; i++)
+    {
+        free(invalid_brName[i]);
+    }
+    free(invalid_brName);
 }
 
 /**
@@ -2044,14 +2062,26 @@ void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
     gTestID = 52;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    char *invalid_brName[] = {
-        "1234",
-        "brlan@10",
-        "brlanXYZ",
-        "bRLaN0"};
+    int count;
     char br_name[64];
-    int i = 0;
+    char **invalid_brName;
+    char invalid_brNamex[MAX_SIZE];
+    int i;
     int result = 0;
+
+    // Get the count of invalid_brName entries
+    count = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
+    printf("Checking invalid_brName list count: %d \n", count);
+
+    // Allocate memory for invalid_brName array
+    invalid_brName = (char **)malloc(count * sizeof(char *));
+    for (i = 0; i < count; i++)
+    {
+        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
+        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
+        printf("%s \n", invalid_brName[i]);
+    }
 
     for (i = 0; i < 4; i++)
     {
@@ -2065,6 +2095,12 @@ void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
 
         UT_LOG_INFO("Out %s\n", __FUNCTION__);
     }
+    // Free the allocated memory
+    for (i = 0; i < count; i++)
+    {
+        free(invalid_brName[i]);
+    }
+    free(invalid_brName);
 }
 
 /**
