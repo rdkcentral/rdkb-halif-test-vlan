@@ -11,6 +11,12 @@ vlan:
       - ""
       - ""
       - ""
+    vlanID:
+      - ""
+      - ""
+      - ""
+      - ""
+
     invalid_brName:
       - ""
       - ""

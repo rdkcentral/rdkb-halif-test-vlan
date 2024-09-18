@@ -37,9 +37,13 @@
 #include "cJSON.h"
 #include "vlan_hal.h"
 #include <ut_kvp_profile.h>
+#include <time.h>
+
+#define MAX_GROUPNAME_SIZE 4
+#define MAX_VLAN_ID 4095
+#define MAX_VLAN_BUFFER_SIZE 5 // 5 bytes for VLAN ID (max 4 digits + null terminator)
 
 #define MAX_SIZE 256
-
 static int gTestGroup = 1;
 static int gTestID = 1;
 
@@ -48,6 +52,41 @@ char **br_Name;
 
 int num_ifName;
 char **if_Name;
+
+int num_invalid_brName;
+char **invalid_brName;
+
+int num_vlanid;
+char **valid_vlanid;
+
+// Function to generate a random out-of-bound VLAN ID and store it locally
+char *generateRandomVLANID(int vlanIDs[], int groupIndex)
+{
+    char *buffer = malloc(MAX_VLAN_BUFFER_SIZE + 1); // Allocate memory dynamically for VLAN ID (5 bytes)
+
+    if (buffer == NULL)
+    {
+        // Handle memory allocation failure
+        perror("malloc failed");
+        exit(EXIT_FAILURE); // Program will terminate if allocation fails
+    }
+
+    // Generate a random out-of-bound VLAN ID (outside the range 1-4095)
+    int vlanID;
+    do
+    {
+        vlanID = rand(); // Generate a random value
+    } while (vlanID >= 1 && vlanID <= 4095); // Reject values within the valid range
+
+    // Convert the VLAN ID to a string
+    snprintf(buffer, MAX_VLAN_BUFFER_SIZE + 1, "%d", vlanID);
+
+    // Store the VLAN ID in the local array for that group
+    vlanIDs[groupIndex] = atoi(buffer);
+
+    // Return the VLAN ID as a string
+    return buffer;
+}
 
 /**
  * @brief Test case to verify the functionality of vlan_hal_addGroup function.
@@ -65,7 +104,7 @@ char **if_Name;
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = "1" | groupName = Value from config file, default_vlanID = "1" | RETURN_OK | Should be successful |
+ * | 01 | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = Valid value from config file  | groupName = Value from config file, default_vlanID = Value from config file | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_addGroup(void)
 {
@@ -73,125 +112,20 @@ void test_l1_vlan_hal_positive1_addGroup(void)
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = {"\0"};
-    const char default_vlanID[5] = "1";
+    char default_vlanID[5] = {"\0"};
+    ;
+    int i;
 
-    strcpy(groupName, br_Name[0]);
-    UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    int result = vlan_hal_addGroup(groupName, default_vlanID);
+    for (i = 0; i < num_brName; i++)
+    {
+        strcpy(groupName, br_Name[i]);
+        strcpy(default_vlanID, valid_vlanid[i]);
+        UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and default_vlanID: %s", groupName, default_vlanID);
+        int result = vlan_hal_addGroup(groupName, default_vlanID);
 
-    UT_LOG_DEBUG("vlan_hal_addGroup API returns : %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Validate the functionality of vlan_hal_addGroup API
- *
- * This test case validates the functionality of vlan_hal_addGroup API by adding a VLAN group with specified VLAN ID and group name.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 002 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = "brlan5", default_vlanID = "200" | groupName = "brlan5", default_vlanID = "200" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive2_addGroup(void)
-{
-    gTestID = 2;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brlan5";
-    const char default_vlanID[15] = "200";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid dgroupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    int result = vlan_hal_addGroup(groupName, default_vlanID);
-
-    UT_LOG_DEBUG("vlan_hal_addGroup api returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test the function vlan_hal_addGroup() with positive inputs.
- *
- * This test case is used to verify the functionality of the vlan_hal_addGroup() function. It checks if the function correctly adds a VLAN group with the given group name and default VLAN ID.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 003 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = "brlan10", default_vlanID = "4094" | groupName = brlan10, default_vlanID = 4094 | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive3_addGroup(void)
-{
-    gTestID = 3;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brlan10";
-    const char default_vlanID[5] = "4094";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    int result = vlan_hal_addGroup(groupName, default_vlanID);
-
-    UT_LOG_DEBUG("vlan_hal_addGroup API returns : %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test case to verify the functionality of vlan_hal_addGroup API.
- *
- * This test case is used to verify whether the vlan_hal_addGroup API is functioning correctly by adding a VLAN group with the given group name and default VLAN ID.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 004 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = "1" | groupName = Value from config file, default_vlanID = "1" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive4_addGroup(void)
-{
-    gTestID = 4;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = {"\0"};
-    const char default_vlanID[5] = "1";
-
-    strcpy(groupName, br_Name[0]);
-    UT_LOG_DEBUG("Invoking vlan_hal_addGroup with groupName: %s, default_vlanID: %s", groupName, default_vlanID);
-    int result = vlan_hal_addGroup(groupName, default_vlanID);
-    UT_LOG_DEBUG("Return Value: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_DEBUG("Invoking vlan_hal_addGroup with same valid groupName: %s and default_vlanID: %s", groupName, default_vlanID);
-    result = vlan_hal_addGroup(groupName, default_vlanID);
-    UT_LOG_DEBUG("Return Value: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
+        UT_LOG_DEBUG("vlan_hal_addGroup API returns : %d", result);
+        UT_ASSERT_EQUAL(result, RETURN_OK);
+    }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
 
@@ -201,7 +135,7 @@ void test_l1_vlan_hal_positive4_addGroup(void)
  * This test verifies that the vlan_hal_addGroup function returns the expected error code when an empty group name is provided.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 005 @n
+ * **Test Case ID:** 002 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -211,15 +145,17 @@ void test_l1_vlan_hal_positive4_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = "", default_vlanID = "1"  | groupName = "", default_vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addGroup with groupName = "", default_vlanID = Value from config file  | groupName = "", default_vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative1_addGroup(void)
 {
-    gTestID = 5;
+    gTestID = 2;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
-    const char default_vlanID[5] = "1";
+    char default_vlanID[5] = {"\0"};
+
+    strcpy(default_vlanID, valid_vlanid[0]);
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with invalid groupName: Empty string and default_vlanID: %s", default_vlanID);
     int result = vlan_hal_addGroup(groupName, default_vlanID);
@@ -235,7 +171,7 @@ void test_l1_vlan_hal_negative1_addGroup(void)
  * This test case is used to verify that the vlan_hal_addGroup function returns the correct error code when adding a group with invalid input parameters.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 006 @n
+ * **Test Case ID:** 003 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -249,7 +185,7 @@ void test_l1_vlan_hal_negative1_addGroup(void)
  */
 void test_l1_vlan_hal_negative2_addGroup(void)
 {
-    gTestID = 6;
+    gTestID = 3;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -260,7 +196,7 @@ void test_l1_vlan_hal_negative2_addGroup(void)
     {
         strcpy(groupName, br_Name[i]);
 
-        UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: Empty string ", groupName);
+        UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid  : Empty string ", groupName);
         int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
@@ -275,7 +211,7 @@ void test_l1_vlan_hal_negative2_addGroup(void)
  * The objective of this test is to verify that the vlan_hal_addGroup() function returns the expected error code when called with invalid parameters.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 007 @n
+ * **Test Case ID:** 004 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -285,15 +221,18 @@ void test_l1_vlan_hal_negative2_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = "brlanXYZ", default_vlanID = "1" | groupName = "brlanXYZ", default_vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addGroup with groupName = Value from config file , default_vlanID = Value from config file | groupName = Value from config file , default_vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative3_addGroup(void)
 {
-    gTestID = 7;
+    gTestID = 4;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
+    char groupName[64];
 
-    char groupName[64] = "brlanXYZ";
-    const char default_vlanID[5] = "1";
+    char default_vlanID[5] = {"\0"};
+
+    strcpy(default_vlanID, valid_vlanid[0]);
+    strcpy(groupName, invalid_brName[0]);
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with invalid groupName: %s and valid default_vlanID: %s", groupName, default_vlanID);
     int result = vlan_hal_addGroup(groupName, default_vlanID);
@@ -305,93 +244,12 @@ void test_l1_vlan_hal_negative3_addGroup(void)
 }
 
 /**
- * @brief Test case to validate the negative scenario of the vlan_hal_addGroup function.
- *
- * This test case verifies the behavior of the vlan_hal_addGroup function when the vlanID is invalid.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 008 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If the user chooses to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description                                          | Test Data                                      | Expected Result     | Notes              |
- * | :--------------: | ---------------------------------------------------- | ---------------------------------------------- | ------------------- | ------------------ |
- * | 01   | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = "0"  | groupName = Value from config file, default_vlanID = "0" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative4_addGroup(void)
-{
-    gTestID = 8;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    const char default_vlanID[5] = "0";
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: %s", groupName, default_vlanID);
-        int result = vlan_hal_addGroup(groupName, default_vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief This function tests the negative scenario for adding a VLAN group in the L1 VLAN HAL.
- *
- * In this test, the function vlan_hal_addGroup is invoked with a group name and a default VLAN ID of -1.
- * The objective of this test is to verify the behavior of the function when a negative VLAN ID is provided.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 009 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description                                            | Test Data                                      | Expected Result | Notes       |
- * | :--------------: | -------------------------------------------------------| ---------------------------------------------- | ----------------| ----------- |
- * |01| Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = "-1" | groupName = Value from config file, default_vlanID = "-1" |  RETURN_ERR     | Should Fail |
- */
-void test_l1_vlan_hal_negative5_addGroup(void)
-{
-    gTestID = 9;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    const char default_vlanID[5] = "-1";
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: %s", groupName, default_vlanID);
-        int result = vlan_hal_addGroup(groupName, default_vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief Test case to verify the behavior when adding a VLAN group with invalid vlanID.
  *
  * This test case validates the functionality of the API vlan_hal_addGroup when it is invoked with invalid vlanID.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 010 @n
+ * **Test Case ID:** 005 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -401,26 +259,31 @@ void test_l1_vlan_hal_negative5_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = "4095"  | groupName = Value from config file, default_vlanID = "4095" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = Random invalid value generated  | groupName = Value from config file, default_vlanID = "4095" | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative6_addGroup(void)
+void test_l1_vlan_hal_negative4_addGroup(void)
 {
-    gTestID = 10;
+    gTestID = 5;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
-    const char default_vlanID[5] = "4095";
+    char *default_vlanID;
+    int vlanIDs[MAX_GROUPNAME_SIZE] = {0}; // Local array to keep track of VLAN IDs
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
 
+        default_vlanID = generateRandomVLANID(vlanIDs, i);
         UT_LOG_DEBUG("Invoking vlan_hal_addGroup with valid groupName: %s and invalid default_vlanID: %s", groupName, default_vlanID);
         int result = vlan_hal_addGroup(groupName, default_vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addGroup API returns: %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
+
+        // Free the dynamically allocated memory for the VLAN ID string
+        free(default_vlanID);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -431,7 +294,7 @@ void test_l1_vlan_hal_negative6_addGroup(void)
  * The purpose of this test is to ensure that the function handles the scenario where the groupName parameter is NULL correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 011 @n
+ * **Test Case ID:** 006 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -441,15 +304,17 @@ void test_l1_vlan_hal_negative6_addGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = NULL, default_vlanID: "1" | groupName = NULL, default_vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addGroup with groupName = NULL, default_vlanID: Value from config file | groupName = NULL, default_vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative7_addGroup(void)
+void test_l1_vlan_hal_negative5_addGroup(void)
 {
-    gTestID = 11;
+    gTestID = 6;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
-    const char default_vlanID[5] = "1";
+    char default_vlanID[5] = {"\0"};
+
+    strcpy(default_vlanID, valid_vlanid[0]);
 
     UT_LOG_DEBUG("Invoking vlan_hal_addGroup with invalid groupName: NULL and valid default_vlanID: %s", default_vlanID);
     int result = vlan_hal_addGroup(groupName, default_vlanID);
@@ -467,7 +332,7 @@ void test_l1_vlan_hal_negative7_addGroup(void)
  * should return an error value.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 012 @n
+ * **Test Case ID:** 00 7@n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -479,9 +344,9 @@ void test_l1_vlan_hal_negative7_addGroup(void)
  * | :----: | --------- | ---------- | --------------- | ----- |
  * | 01 | Invoking vlan_hal_addGroup with valid groupName = Value from config file, default_vlanID = NULL | groupName = Value from config file, default_vlanID = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative8_addGroup(void)
+void test_l1_vlan_hal_negative6_addGroup(void)
 {
-    gTestID = 12;
+    gTestID = 7;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -502,81 +367,12 @@ void test_l1_vlan_hal_negative8_addGroup(void)
 }
 
 /**
- * @brief Test function to verify the behavior of the vlan_hal_delGroup function when deleting a VLAN group.
- *
- * This test is designed to verify the functionality of the vlan_hal_delGroup function to properly delete a VLAN group.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 013 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addGroup with groupName = "brlan5" | groupName = "brlan5" | RETURN_OK | Should successful |
- */
-void test_l1_vlan_hal_positive1_delGroup(void)
-{
-    gTestID = 13;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brlan5";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_delGroup with valid groupName: %s", groupName);
-    int result = vlan_hal_delGroup(groupName);
-
-    UT_LOG_DEBUG("vlan_hal_delGroup API returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test the negative scenario of deleting a VLAN group using vlan_hal_delGroup function.
- *
- * This test verifies that the vlan_hal_delGroup function returns an RETURN_OK when trying to delete a VLAN group.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 014 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- *
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_delGroup with groupName = "brlanXYZ" | groupName = "brlanXYZ" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive2_delGroup(void)
-{
-    gTestID = 14;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brlanXYZ";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_delGroup with invalid groupName: %s", groupName);
-    int result = vlan_hal_delGroup(groupName);
-
-    UT_LOG_DEBUG("vlan_hal_delGroup API returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief Test to verify the negative scenario of deleting a VLAN group with an empty group name.
  *
  * This test case is used to verify the behavior of the function vlan_hal_delGroup() when deleting a VLAN group with an empty group name as input.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 015 @n
+ * **Test Case ID:** 008 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -590,7 +386,7 @@ void test_l1_vlan_hal_positive2_delGroup(void)
  */
 void test_l1_vlan_hal_negative1_delGroup(void)
 {
-    gTestID = 15;
+    gTestID = 8;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
@@ -610,7 +406,7 @@ void test_l1_vlan_hal_negative1_delGroup(void)
  * The objective of this test is to check if the vlan_hal_delGroup function correctly handles the case where the groupName argument is NULL.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 016 @n
+ * **Test Case ID:** 009 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -624,7 +420,7 @@ void test_l1_vlan_hal_negative1_delGroup(void)
  */
 void test_l1_vlan_hal_negative2_delGroup(void)
 {
-    gTestID = 16;
+    gTestID = 9;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
@@ -644,7 +440,7 @@ void test_l1_vlan_hal_negative2_delGroup(void)
  * This test case is used to verify the functionality of vlan_hal_addInterface API. It checks if the API is able to add a VLAN interface to a given VLAN group.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 017 @n
+ * **Test Case ID:** 010 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -654,22 +450,24 @@ void test_l1_vlan_hal_negative2_delGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface with valid groupName = Value from config file file, valid ifName = Value from config file and vlanID = "1"  | groupName = Value from config file, ifName = Value from config file, vlanID = "1" | RETURN_OK | Should be successful |
+ * | 01 | Invoking vlan_hal_addInterface with valid groupName = Value from config file file, valid ifName = Value from config file and vlanID = Value from config file  | groupName = Value from config file, ifName = Value from config file, vlanID = Value from config file | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_addInterface(void)
 {
-    gTestID = 17;
+    gTestID = 10;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
+
     strcpy(ifName, if_Name[0]);
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and vlanID: %s", groupName, ifName, vlanID);
         int result = vlan_hal_addInterface(groupName, ifName, vlanID);
@@ -686,7 +484,7 @@ void test_l1_vlan_hal_positive1_addInterface(void)
  *  The objective of this test is to check if the vlan_hal_addInterface function correctly handles the case were it is invoked with invalid arguments
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 018 @n
+ * **Test Case ID:** 011 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -696,17 +494,19 @@ void test_l1_vlan_hal_positive1_addInterface(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface with groupName = "", valid ifName = Value from config file, vlanID = "1" | groupName = "", ifName = Value from config file, vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addInterface with groupName = "", valid ifName = Value from config file, vlanID = Value from config file | groupName = "", ifName = Value from config file, vlanID = "1" | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative1_addInterface(void)
 {
-    gTestID = 18;
+    gTestID = 11;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = "";
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
+
+    strcpy(vlanID, valid_vlanid[0]);
 
     for (i = 0; i < num_ifName; i++)
     {
@@ -727,7 +527,7 @@ void test_l1_vlan_hal_negative1_addInterface(void)
  * This test is to validate the behavior of the "vlan_hal_addInterface" function when the input interface name is empty.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 019 @n
+ * **Test Case ID:** 012 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -741,17 +541,18 @@ void test_l1_vlan_hal_negative1_addInterface(void)
  */
 void test_l1_vlan_hal_negative2_addInterface(void)
 {
-    gTestID = 19;
+    gTestID = 12;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     char ifName[64] = "";
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, invalid ifName: Empty String and valid vlanID: %s", groupName, vlanID);
         int result = vlan_hal_addInterface(groupName, ifName, vlanID);
@@ -768,7 +569,7 @@ void test_l1_vlan_hal_negative2_addInterface(void)
  * The objective of this test is to verify that vlan_hal_addInterface returns RETURN_ERR when an empty vlanID is provided.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 020 @n
+ * **Test Case ID:** 013 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -782,13 +583,13 @@ void test_l1_vlan_hal_negative2_addInterface(void)
  */
 void test_l1_vlan_hal_negative3_addInterface(void)
 {
-    gTestID = 20;
+    gTestID = 13;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "";
+    char vlanID[5] = "";
 
     for (i = 0; i < num_ifName; i++)
     {
@@ -810,7 +611,7 @@ void test_l1_vlan_hal_negative3_addInterface(void)
  * The test verifies that if the function is called with an invalid groupName and it returns an error code.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 021 @n
+ * **Test Case ID:** 014 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -820,17 +621,21 @@ void test_l1_vlan_hal_negative3_addInterface(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface groupName = "brlanXYZ", valid ifName = Value from config file, vlanID = "1" | groupName = "brlanXYZ", ifName = Value from config file, vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_addInterface groupName = Invalid value from config file, valid ifName = Value from config file, vlanID = Value from config file | groupName = Invalid value from config file, ifName = Value from config file, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative4_addInterface(void)
 {
-    gTestID = 21;
+    gTestID = 14;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
-    char groupName[64] = "brlanXYZ";
+    char groupName[64];
+    char vlanID[5] = {"\0"};
+
+    strcpy(groupName, invalid_brName[i]);
+    strcpy(vlanID, valid_vlanid[0]);
+
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "1";
 
     for (i = 0; i < num_ifName; i++)
     {
@@ -851,7 +656,7 @@ void test_l1_vlan_hal_negative4_addInterface(void)
  * This unit test is used to verify the behavior of the function vlan_hal_addInterface when negative inputs are provided. It checks whether the function returns RETURN_ERR as expected in case of negative inputs.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 022 @n
+ * **Test Case ID:** 015 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -866,110 +671,29 @@ void test_l1_vlan_hal_negative4_addInterface(void)
  */
 void test_l1_vlan_hal_negative5_addInterface(void)
 {
-    gTestID = 22;
+    gTestID = 15;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "0";
+    char *vlanID;
+    int vlanIDs[MAX_GROUPNAME_SIZE] = {0}; // Local array to keep track of VLAN IDs
 
-    for (i = 0; i < num_ifName; i++)
+    for (i = 0; i < num_brName; i++)
     {
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
+
+        vlanID = generateRandomVLANID(vlanIDs, i);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: %s", groupName, ifName, vlanID);
         int result = vlan_hal_addInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
 
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief This test case is used to validate the negative scenario of the vlan_hal_addInterface function.
- *
- * The purpose of this test is to verify the behavior of the vlan_hal_addInterface function when a negative vlanID is passed as an argument. The expected result is that the function should return RETURN_ERR.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 023 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If the user chooses to run the test in interactive mode, the test case should be selected via the console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data                                                   | Expected Result | Notes            |
- * | :--------------: | ----------- | ----------------------------------------------------------  | --------------- | ----------------- |
- * | 01 | Invoking vlan_hal_addInterface with valid groupName = Value from config file, valid ifName = Value from config file, vlanID = "-1"| groupName = Value from config file, ifName = Value from config file, vlanID = "-1"| RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative6_addInterface(void)
-{
-    gTestID = 23;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char ifName[64] = {"\0"};
-    const char vlanID[5] = "-1";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: %s", groupName, ifName, vlanID);
-        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_addInterface API returns : %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief This test verifies the behavior of the vlan_hal_addInterface function when a VLAN with the maximum ID is added.
- *
- * The purpose of this test is to ensure that the function returns an error when it is invked with invalid vlanID.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 024 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | --------------- | ----- |
- * | 01 | Invoking vlan_hal_addInterface with valie groupName = Value from config file, valid ifName = Value from config file, vlanID = "4095" | groupName = Value from config file, ifName = Value from config file, vlanID = "4095" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative7_addInterface(void)
-{
-    gTestID = 24;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char ifName[64] = {"\0"};
-    const char vlanID[5] = "4095";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, ifName: %s and invalid vlanID: %s", groupName, ifName, vlanID);
-        int result = vlan_hal_addInterface(groupName, ifName, vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_addInterface returns : %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
+        free(vlanID);
     }
 
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -981,7 +705,7 @@ void test_l1_vlan_hal_negative7_addInterface(void)
  * This test is to verify the behavior of the vlan_hal_addInterface function when the group name is NULL. The function should return an error value.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 025 @n
+ * **Test Case ID:** 016 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -993,15 +717,17 @@ void test_l1_vlan_hal_negative7_addInterface(void)
  * | :----: | --------- | ---------- |-------------- | ----- |
  * | 01 | Invoking vlan_hal_addInterface with groupName = NULL, valid ifName = Value from config file, vlanID = "1"  | groupName = NULL, ifName = Value from config file, vlanID = "1" | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative8_addInterface(void)
+void test_l1_vlan_hal_negative6_addInterface(void)
 {
-    gTestID = 25;
+    gTestID = 16;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     const char *groupName = NULL;
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
+
+    strcpy(vlanID, valid_vlanid[0]);
 
     for (i = 0; i < num_ifName; i++)
     {
@@ -1023,7 +749,7 @@ void test_l1_vlan_hal_negative8_addInterface(void)
  * This test is meant to verify the behavior of the vlan_hal_addInterface function when the ifName is NULL. The function should return an error value.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 026 @n
+ * **Test Case ID:** 017 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1035,19 +761,20 @@ void test_l1_vlan_hal_negative8_addInterface(void)
  * | :----: | --------- | ---------- | -------------- | ----- |
  * | 01 | Invoking vlan_hal_addInterface with valid groupName = Value from config file, ifName = NULL, vlanID = "1"  | groupName = Value from config file, ifName = NULL, vlanID = "1" | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative9_addInterface(void)
+void test_l1_vlan_hal_negative7_addInterface(void)
 {
-    gTestID = 26;
+    gTestID = 17;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     const char *ifName = NULL;
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_addInterface with valid groupName: %s, invalid ifName: NULL and vlanID: %s", groupName, vlanID);
         int result = vlan_hal_addInterface(groupName, ifName, vlanID);
@@ -1065,7 +792,7 @@ void test_l1_vlan_hal_negative9_addInterface(void)
  * This test case checks if the function vlan_hal_addInterface handles the NULL vlanID input correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 027 @n
+ * **Test Case ID:** 018 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1077,9 +804,9 @@ void test_l1_vlan_hal_negative9_addInterface(void)
  * | :----: | --------- | ---------- |-------------- | ----- |
  * | 01 | Invoking vlan_hal_addInterface with valid groupName = Value from config file, valid ifName = Value from config file, vlanID = NULL | groupName = Value from config file, ifName = Value from config file, vlanID = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative10_addInterface(void)
+void test_l1_vlan_hal_negative8_addInterface(void)
 {
-    gTestID = 27;
+    gTestID = 18;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -1102,53 +829,12 @@ void test_l1_vlan_hal_negative10_addInterface(void)
 }
 
 /**
- * @brief Test case to verify the functionality of vlan_hal_delInterface when deleting a VLAN interface.
- *
- * The objective of this test case is to ensure that the vlan_hal_delInterface function is working correctly when deleting a VLAN interface.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 028 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None. @n
- * **Dependencies:** None. @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_delInterface with valid groupName = Value from config file, ifName = "ethXYZ", vlanID = "1" | groupName = Value from config file, ifName = "ethXYZ", vlanID = "1" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive1_delInterface(void)
-{
-    gTestID = 28;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char ifName[64] = "ethXYZ";
-    const char vlanID[5] = "1";
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s, vlanID=%s", groupName, ifName, vlanID);
-        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_delInterface API returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief This test case is used to verify the functionality of the vlan_hal_delInterface API in a negative scenario.
  *
  * The objective of this test is to check if the vlan_hal_delInterface API returns the expected error code when called with a specific set of parameters.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 029 @n
+ * **Test Case ID:** 019 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1158,21 +844,22 @@ void test_l1_vlan_hal_positive1_delInterface(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_delInterface with groupName = "", valid ifName = Value from config file, vlanID = "1"  | groupName = "", ifName = Value from config file, vlanID = "1" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_delInterface with groupName = "", valid ifName = Value from config file, vlanID = Value from config file  | groupName = "", ifName = Value from config file, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative1_delInterface(void)
 {
-    gTestID = 29;
+    gTestID = 19;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = "";
     char ifName[64] = {"\0"};
-    const char vlanID[64] = "1";
+    char vlanID[64];
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with invalid groupName = Empty string, ifName = %s, vlanID = %s", ifName, vlanID);
         int result = vlan_hal_delInterface(groupName, ifName, vlanID);
@@ -1189,7 +876,7 @@ void test_l1_vlan_hal_negative1_delInterface(void)
  * This test case verifies the behavior of the vlan_hal_delInterface function when an empty interface name is provided.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 030 @n
+ * **Test Case ID:** 020 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1204,17 +891,18 @@ void test_l1_vlan_hal_negative1_delInterface(void)
  */
 void test_l1_vlan_hal_negative2_delInterface(void)
 {
-    gTestID = 30;
+    gTestID = 20;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     char ifName[64] = "";
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[0]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, invalid ifName=Empty string and valid vlanID=%s", groupName, vlanID);
         int result = vlan_hal_delInterface(groupName, ifName, vlanID);
@@ -1231,7 +919,7 @@ void test_l1_vlan_hal_negative2_delInterface(void)
  * The test checks if the API returns the expected error code when deleting a VLAN interface with invalid VLAN ID.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 031 @n
+ * **Test Case ID:** 021 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1247,7 +935,7 @@ void test_l1_vlan_hal_negative2_delInterface(void)
  */
 void test_l1_vlan_hal_negative3_delInterface(void)
 {
-    gTestID = 31;
+    gTestID = 21;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -1275,7 +963,7 @@ void test_l1_vlan_hal_negative3_delInterface(void)
  * This test case is used to verify the function vlan_hal_delInterface returns an error code when it is invoked with invalid vlanID.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 032 @n
+ * **Test Case ID:** 022 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1285,112 +973,33 @@ void test_l1_vlan_hal_negative3_delInterface(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking vlan_hal_delInterface valid groupName = Value from config file, valid ifName = Value from config file, vlanID = "0"  | groupName = Value from config file, ifName = Value from config file, vlanID = "0" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking vlan_hal_delInterface valid groupName = Value from config file, valid ifName = Value from config file, vlanID = Invalid value  | groupName = Value from config file, ifName = Value from config file, vlanID = Invalid value | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative4_delInterface(void)
 {
-    gTestID = 32;
+    gTestID = 22;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "0";
+    char *vlanID;
+    int vlanIDs[MAX_GROUPNAME_SIZE] = {0}; // Local array to keep track of VLAN IDs
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
         strcpy(groupName, br_Name[i]);
+
+        vlanID = generateRandomVLANID(vlanIDs, i);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=%s", groupName, ifName, vlanID);
         int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
         UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
 
-/**
- * @brief Test case to verify the functionality of vlan_hal_delInterface when a negative VLAN ID is provided
- *
- * This test case checks whether the function vlan_hal_delInterface works correctly when a negative VLAN ID is provided as input.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 033 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data                                                   | Expected Result          | Notes              |
- * | :--------------: | ----------- | ----------------------------------------------------------- | ------------------------ | ------------------ |
- * |       01         | Invoking vlan_hal_delInterface with valid groupName = Value from config file, valid ifName = Value from config file, vlanID = "-1" | groupName = Value from config file, ifName = Value from config file, vlanID = "-1" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative5_delInterface(void)
-{
-    gTestID = 33;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char ifName[64] = {"\0"};
-    const char vlanID[5] = "-1";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=%s", groupName, ifName, vlanID);
-        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_delInterface API returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
-* @brief This test case is to verify the negative scenario of the vlan_hal_delInterface function.
-*
-* The objective of this test is to verify the behavior of the vlan_hal_delInterface function when invalid vlanID is provided.
-*
-* **Test Group ID:** Basic: 01 @n
-* **Test Case ID:** 034 @n
-* **Priority:** High @n@n
-*
-* **Pre-Conditions:** None @n
-* **Dependencies:** None @n
-* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
-*
-* **Test Procedure:** @n
-* | Variation / Step | Description | Test Data |Expected Result |Notes |
-| :----: | --------- | ---------- |-------------- | ----- |
-| 01 | Invoking vlan_hal_delInterface with valid groupName = Value from config file, valid ifName = Value from config file, vlanID = "4095" | groupName = Value from config file, ifName = Value from config file, vlanID = "4095" | RETURN_ERR | Should Fail |
-*/
-void test_l1_vlan_hal_negative6_delInterface(void)
-{
-    gTestID = 34;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char ifName[64] = {"\0"};
-    const char vlanID[5] = "4095";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, ifName=%s and invalid vlanID=%s", groupName, ifName, vlanID);
-        int result = vlan_hal_delInterface(groupName, ifName, vlanID);
-
-        UT_LOG_DEBUG("vlan_hal_delInterface returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
+        free(vlanID);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -1403,7 +1012,7 @@ void test_l1_vlan_hal_negative6_delInterface(void)
  * an error code (RETURN_ERR).
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 035 @n
+ * **Test Case ID:** 023 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1414,21 +1023,22 @@ void test_l1_vlan_hal_negative6_delInterface(void)
  * 1. Test the negative scenario when passing NULL as the group name and valid interface name and VLAN ID.
  *  | Variation / Step | Description | Test Data | Expected Result | Notes |
  *  | :----: | --------- | ---------- | -------------- | ----- |
- *  | 01 | Invoking vlan_hal_delInterface with groupName = NULL, valid ifName = Value from config file, vlanID = "1" | groupName = NULL, ifName = Value from config file, vlanID = "1" | RETURN_ERR | Should Fail |
+ *  | 01 | Invoking vlan_hal_delInterface with groupName = NULL, valid ifName = Value from config file, vlanID = Value from config file | groupName = NULL, ifName = Value from config file, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative7_delInterface(void)
+void test_l1_vlan_hal_negative5_delInterface(void)
 {
-    gTestID = 35;
+    gTestID = 23;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     const char *groupName = NULL;
     char ifName[64] = {"\0"};
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with invalid groupName=NULL and valid ifName=%s, vlanID=%s", ifName, vlanID);
         int result = vlan_hal_delInterface(groupName, ifName, vlanID);
@@ -1445,7 +1055,7 @@ void test_l1_vlan_hal_negative7_delInterface(void)
  * This test case verifies the behavior of vlan_hal_delInterface function when ifName is NULL. The function should return a specific error code.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 036 @n
+ * **Test Case ID:** 024 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1455,21 +1065,23 @@ void test_l1_vlan_hal_negative7_delInterface(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data                                             | Expected Result                            | Notes              |
  * | :--------------: | ----------- | ---------------------------------------------------- | ------------------------------------------ | ------------------ |
- * |       01         | Invoking vlan_hal_delInterface with valid groupName = Value from config file, ifName = NULL, vlanID = "1"| groupName = Value from config file, ifName = NULL, vlanID = "1" | RETURN_ERR | Should Fail |
+ * |       01         | Invoking vlan_hal_delInterface with valid groupName = Value from config file, ifName = NULL, vlanID = Value from config file | groupName = Value from config file, ifName = NULL, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative8_delInterface(void)
+void test_l1_vlan_hal_negative6_delInterface(void)
 {
-    gTestID = 36;
+    gTestID = 24;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
     const char *ifName = NULL;
-    const char vlanID[5] = "1";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
+
         UT_LOG_DEBUG("Invoking vlan_hal_delInterface with valid groupName=%s, invalid ifName=NULL and valid vlanID=%s", groupName, ifName, vlanID);
         int result = vlan_hal_delInterface(groupName, ifName, vlanID);
 
@@ -1485,7 +1097,7 @@ void test_l1_vlan_hal_negative8_delInterface(void)
  * This test case verifies the behavior of the vlan_hal_delInterface function when attempting to delete a VLAN interface. The function should return an error code in this scenario.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 037 @n
+ * **Test Case ID:** 025 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1498,9 +1110,9 @@ void test_l1_vlan_hal_negative8_delInterface(void)
  *|-----------------:|-------------|-----------|-----------------|-------|
  *|      01         |  Invoking vlan_hal_delInterface with valid groupName = Value from config file, valid ifName = Value from config file, vlanID = NULL | groupName = Value from config file, ifName = Value from config file, vlanID = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative9_delInterface(void)
+void test_l1_vlan_hal_negative7_delInterface(void)
 {
-    gTestID = 37;
+    gTestID = 25;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -1527,7 +1139,7 @@ void test_l1_vlan_hal_negative9_delInterface(void)
  * The objective of this test is to verify that the VLAN_HAL_printGroup function correctly prints the VLAN group information for the 'brlan0' group.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 038 @n
+ * **Test Case ID:** 026 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1541,7 +1153,7 @@ void test_l1_vlan_hal_negative9_delInterface(void)
  */
 void test_l1_vlan_hal_positive1_printGroup(void)
 {
-    gTestID = 38;
+    gTestID = 26;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -1566,7 +1178,7 @@ void test_l1_vlan_hal_positive1_printGroup(void)
  * This test case checks whether the "vlan_hal_printGroup" function handles the scenario when an empty string is passed as the groupName parameter correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 039 @n
+ * **Test Case ID:** 027 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1580,7 +1192,7 @@ void test_l1_vlan_hal_positive1_printGroup(void)
  */
 void test_l1_vlan_hal_negative1_printGroup(void)
 {
-    gTestID = 39;
+    gTestID = 27;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
@@ -1600,7 +1212,7 @@ void test_l1_vlan_hal_negative1_printGroup(void)
  * The objective of this test is to ensure that the function correctly handles the scenario when the groupName consists of only numeric characters.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 040 @n
+ * **Test Case ID:** 028 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1610,34 +1222,18 @@ void test_l1_vlan_hal_negative1_printGroup(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes   |
  * | :--------------: | ----------- | --------- | --------------- | ------- |
- * |       01         | Invoking vlan_hal_printGroup with groupName = "1234"| groupName = "1234" | RETURN_ERR | Should Fail|
+ * |       01         | Invoking vlan_hal_printGroup with groupName = Invalid value from config file | groupName = Invalid value from config file | RETURN_ERR | Should Fail|
  */
 void test_l1_vlan_hal_negative2_printGroup(void)
 {
-    gTestID = 40;
+    gTestID = 28;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-    int count;
+
     char groupName[64];
-    char **invalid_brName;
-    char invalid_brNamex[MAX_SIZE];
     int i;
     int result = 0;
 
-    // Get the count of invalid_brName entries
-    count = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
-    printf("Checking invalid_brName list count: %d \n", count);
-
-    // Allocate memory for invalid_brName array
-    invalid_brName = (char **)malloc(count * sizeof(char *));
-    for (i = 0; i < count; i++)
-    {
-        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
-        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
-        printf("%s \n", invalid_brName[i]);
-    }
-
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < num_invalid_brName; i++)
     {
         strcpy(groupName, invalid_brName[i]);
 
@@ -1649,12 +1245,6 @@ void test_l1_vlan_hal_negative2_printGroup(void)
 
         UT_LOG_INFO("Out %s\n", __FUNCTION__);
     }
-    // Free the allocated memory
-    for (i = 0; i < count; i++)
-    {
-        free(invalid_brName[i]);
-    }
-    free(invalid_brName);
 }
 
 /**
@@ -1663,7 +1253,7 @@ void test_l1_vlan_hal_negative2_printGroup(void)
  * The objective of this test is to ensure that the vlan_hal_printGroup function returns RETURN_ERR when the groupName is NULL.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 041 @n
+ * **Test Case ID:** 029 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1675,9 +1265,9 @@ void test_l1_vlan_hal_negative2_printGroup(void)
  * | :----: | --------- | ---------- |-------------- | ----- |
  * | 01 | Invoking vlan_hal_printGroup with groupName = NULL | groupName = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative4_printGroup(void)
+void test_l1_vlan_hal_negative3_printGroup(void)
 {
-    gTestID = 41;
+    gTestID = 29;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
@@ -1697,7 +1287,7 @@ void test_l1_vlan_hal_negative4_printGroup(void)
  * This test verifies the functionality of the vlan_hal_printAllGroup function by invoking it and checking its return value.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 042 @n
+ * **Test Case ID:** 030 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1711,7 +1301,7 @@ void test_l1_vlan_hal_negative4_printGroup(void)
  */
 void test_l1_vlan_hal_positive1_printAllGroup(void)
 {
-    gTestID = 42;
+    gTestID = 30;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     UT_LOG_DEBUG("Invoking vlan_hal_printAllGroup.");
@@ -1724,50 +1314,12 @@ void test_l1_vlan_hal_positive1_printAllGroup(void)
 }
 
 /**
- * @brief Test case to verify the functionality of "vlan_hal_delete_all_Interfaces" function
- *
- * This test case verifies the functionality of the "vlan_hal_delete_all_Interfaces" function by deleting all the VLAN interfaces associated with a given VLAN group.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 043 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If the user chooses to run the test in interactive mode, the test case has to be selected via the console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----:           | ---------   | ----------|  -------------- | ----- |
- * | 01               | Invoking vlan_hal_delete_all_Interfaces with valid groupName = Value from config file| groupName = Value from config file| RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive1_delete_all_Interfaces(void)
-{
-    gTestID = 43;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-    int i = 0;
-    char groupName[64] = {"\0"};
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with valid groupName: %s", groupName);
-        int result = vlan_hal_delete_all_Interfaces(groupName);
-
-        UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief This test case verifies the negative scenario of the function vlan_hal_delete_all_Interfaces where it fails to delete all interfaces.
  *
  * This test is important to ensure the function handles the failure case correctly and returns an appropriate error code.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 044 @n
+ * **Test Case ID:** 031 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1781,7 +1333,7 @@ void test_l1_vlan_hal_positive1_delete_all_Interfaces(void)
  */
 void test_l1_vlan_hal_negative1_delete_all_Interfaces(void)
 {
-    gTestID = 44;
+    gTestID = 31;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char groupName[64] = "";
 
@@ -1800,7 +1352,7 @@ void test_l1_vlan_hal_negative1_delete_all_Interfaces(void)
  * This test case checks the behavior of the vlan_hal_delete_all_Interfaces function when called with an invalid group name. The objective is to verify that the function returns the expected error code.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 045 @n
+ * **Test Case ID:** 032 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1810,56 +1362,29 @@ void test_l1_vlan_hal_negative1_delete_all_Interfaces(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data                        | Expected Result          | Notes                |
  * | :---------------: | ----------- | -------------------------------- | ------------------------ | -------------------- |
- * |       01          | Invoking vlan_hal_delete_all_Interfaces with groupName = "1234"  | groupName = "1234" |RETURN_ERR| Should Fail |
+ * |       01          | Invoking vlan_hal_delete_all_Interfaces with groupName = Invalid value from config file  | groupName = Invalid value from config file |RETURN_ERR| Should Fail |
  */
 void test_l1_vlan_hal_negative2_delete_all_Interfaces(void)
 {
-    gTestID = 45;
+    gTestID = 32;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    char groupName[64] = "1234";
+    char groupName[64];
+    int i;
+    int result = 0;
 
-    UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    int result = vlan_hal_delete_all_Interfaces(groupName);
+    for (i = 0; i < num_invalid_brName; i++)
+    {
+        strcpy(groupName, invalid_brName[i]);
 
-    UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
+        UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
+        result = vlan_hal_delete_all_Interfaces(groupName);
 
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
+        UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
 
-/**
- * @brief Test to verify the negative scenario of deleting all interfaces in a VLAN group
- *
- * This test case checks the behavior of the vlan_hal_delete_all_Interfaces function when called with an invalid group name. The objective is to ensure that the API returns an error code.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 046 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data                        | Expected Result          | Notes                |
- * | :---------------: | ----------- | -------------------------------- | ------------------------ | -------------------- |
- * | 01 | Invoking vlan_hal_delete_all_Interfaces with groupName = "brlan@10" | groupName = "brlan@10" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative3_delete_all_Interfaces(void)
-{
-    gTestID = 46;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brlan@10";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    int result = vlan_hal_delete_all_Interfaces(groupName);
-
-    UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
+        UT_LOG_INFO("Out %s\n", __FUNCTION__);
+    }
 }
 
 /**
@@ -1868,7 +1393,7 @@ void test_l1_vlan_hal_negative3_delete_all_Interfaces(void)
  * The objective of this test case is to ensure that the function handles the NULL groupName parameter correctly and returns the expected result.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 047 @n
+ * **Test Case ID:** 033 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1880,9 +1405,9 @@ void test_l1_vlan_hal_negative3_delete_all_Interfaces(void)
  * | :----: | --------- | ---------- | -------------- | ----- |
  * | 01 | Invoking vlan_hal_delete_all_Interfaces with groupName = NULL | groupName = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative4_delete_all_Interfaces(void)
+void test_l1_vlan_hal_negative3_delete_all_Interfaces(void)
 {
-    gTestID = 47;
+    gTestID = 33;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
@@ -1897,81 +1422,12 @@ void test_l1_vlan_hal_negative4_delete_all_Interfaces(void)
 }
 
 /**
-
- * @brief Test case to verify the functionality of `vlan_hal_delete_all_Interfaces` when deleting all VLAN interfaces with non-existent group name
- *
- * The objective of this test is to ensure that the `vlan_hal_delete_all_Interfaces` function returns `RETURN_ERR` when attempting to delete all VLAN interfaces with a group name that does not exist.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 048 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking vlan_hal_delete_all_Interfaces with groupName = "brlanXYZ" | groupName = "brlanXYZ" | RETURN_ERR | Should Fail|
- */
-void test_l1_vlan_hal_negative5_delete_all_Interfaces(void)
-{
-    gTestID = 48;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brlanXYZ";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    int result = vlan_hal_delete_all_Interfaces(groupName);
-
-    UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test case to validate the negative scenario of the function 'vlan_hal_delete_all_Interfaces'
- *
- * This test case verifies the scenario where the function 'vlan_hal_delete_all_Interfaces' is invoked with an invalid group name.
- * The objective of this test is to check whether the function returns an error code when invoked with an invalid group name.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 049 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- *| Variation / Step | Description | Test Data | Expected Result | Notes |
- *| :----: | --------- | ---------- |-------------- | ----- |
- *| 01 | Invoking vlan_hal_delete_all_Interfaces with groupName = "bRLaN0"  | groupName = "bRLaN0" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative6_delete_all_Interfaces(void)
-{
-    gTestID = 49;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-    char groupName[64] = "bRLaN0";
-
-    UT_LOG_DEBUG("Invoking vlan_hal_delete_all_Interfaces with invalid groupName: %s", groupName);
-    int result = vlan_hal_delete_all_Interfaces(groupName);
-
-    UT_LOG_DEBUG("vlan_hal_delete_all_Interfaces API returns: %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief Test to check if a specific group is available in the Linux bridge brlan0
  *
  * This test is used to determine if a specific group is available in the Linux bridge brlan0. It invokes the _is_this_group_available_in_linux_bridge API with the bridge name brlan0 and checks if the return value is equal to RETURN_OK.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 050 @n
+ * **Test Case ID:** 034 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -1985,7 +1441,7 @@ void test_l1_vlan_hal_negative6_delete_all_Interfaces(void)
  */
 void test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge(void)
 {
-    gTestID = 50;
+    gTestID = 34;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -2010,7 +1466,7 @@ void test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge(void)
  * This test case checks if the _is_this_group_available_in_linux_bridge function returns the expected error code when provided with an empty string as the bridge name.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID: 051 @n
+ * **Test Case ID: 035 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2025,7 +1481,7 @@ void test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge(void)
  */
 void test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge(void)
 {
-    gTestID = 51;
+    gTestID = 35;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char br_name[64] = "";
@@ -2045,7 +1501,7 @@ void test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge(void)
  * This test case checks the availability of a group in the Linux bridge. It verifies if the function _is_this_group_available_in_linux_bridge correctly returns an error when the group name consists of only numeric characters.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 052 @n
+ * **Test Case ID:** 036 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2055,35 +1511,18 @@ void test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_group_available_in_linux_bridge with br_name = "1234"| br_name = 1234 | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_group_available_in_linux_bridge with br_name = Invalid value from config file | br_name = Invalid value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
 {
-    gTestID = 52;
+    gTestID = 36;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    int count;
     char br_name[64];
-    char **invalid_brName;
-    char invalid_brNamex[MAX_SIZE];
     int i;
     int result = 0;
 
-    // Get the count of invalid_brName entries
-    count = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
-    printf("Checking invalid_brName list count: %d \n", count);
-
-    // Allocate memory for invalid_brName array
-    invalid_brName = (char **)malloc(count * sizeof(char *));
-    for (i = 0; i < count; i++)
-    {
-        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
-        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
-        printf("%s \n", invalid_brName[i]);
-    }
-
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < num_invalid_brName; i++)
     {
         strcpy(br_name, invalid_brName[i]);
 
@@ -2095,12 +1534,6 @@ void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
 
         UT_LOG_INFO("Out %s\n", __FUNCTION__);
     }
-    // Free the allocated memory
-    for (i = 0; i < count; i++)
-    {
-        free(invalid_brName[i]);
-    }
-    free(invalid_brName);
 }
 
 /**
@@ -2109,7 +1542,7 @@ void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
  * This test case is used to check if the function "_is_this_group_available_in_linux_bridge" correctly handles the situation when the bridge name is a null string.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 053 @n
+ * **Test Case ID:** 037 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2121,9 +1554,9 @@ void test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge(void)
  *  | :----: | --------- | ---------- |-------------- | ----- |
  *  | 01 | Invoking _is_this_group_available_in_linux_bridge with br_name = NULL  | br_name = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge(void)
+void test_l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge(void)
 {
-    gTestID = 53;
+    gTestID = 37;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char *br_name = NULL;
 
@@ -2143,7 +1576,7 @@ void test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge(void)
  * if a given interface with a valid VLAN ID exists in the Linux bridge.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 054 @n
+ * **Test Case ID:** 038 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2153,105 +1586,26 @@ void test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = "10" | ifName = Value from config file, vlanID = "10" | RETURN_OK | Should be successful |
+ * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = Value from config file | ifName = Value from config file, vlanID = Value from config file | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge(void)
 {
-    gTestID = 54;
+    gTestID = 38;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
+
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid parameters ifName: %s, vlanID: %s", ifName, vlanID);
         int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Tests if a given interface and minimum valid VLAN ID is available in the Linux bridge
- *
- * This test case checks if a particular interface and minimum valid VLAN ID is available in the Linux bridge. It tests the function
- * "_is_this_interface_available_in_linux_bridge", which returns the result of the availability check.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 055 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = "1" | ifName = Value from config file, vlanID = "1" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge(void)
-{
-    gTestID = 55;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char ifName[64] = {"\0"};
-    char vlanID[5] = "1";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-
-        UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid parameters ifName: %s, vlanID: %s", ifName, vlanID);
-        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
-
-        UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief This test case is used to verify the functionality of the is_this_interface_available_in_linux_bridge API.
- *
- * This test is designed to verify if the _is_this_interface_available_in_linux_bridge function correctly identifies the availability of a valid interface and maximum valid VLAN ID in the Linux bridge.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 056 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = if_Name[2], vlanID = "4094" | ifName = if_Name[2], vlanID = "4094" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge(void)
-{
-    gTestID = 56;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char ifName[64] = {"\0"};
-    char vlanID[5] = "4094";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-
-        UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid parameters ifName: %s, vlanID: %s", ifName, vlanID);
-        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
-
-        UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
         UT_ASSERT_EQUAL(result, RETURN_OK);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
@@ -2263,7 +1617,7 @@ void test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge(void
  * This test case verifies the functionality of the _is_this_interface_available_in_linux_bridge function by passing an empty string as the interface name. The objective of this test is to check if the function handles invalid input of an empty interface name correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 057 @n
+ * **Test Case ID:** 039 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2273,14 +1627,16 @@ void test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge(void
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with ifName = "", vlanID = "10" | ifName = "", vlanID = "10" | RETURN_ERR | Should Fail|
+ * | 01 | Invoking _is_this_interface_available_in_linux_bridge with ifName = "", vlanID = Value from config file | ifName = "", vlanID = Value from config file | RETURN_ERR | Should Fail|
  */
 void test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge(void)
 {
-    gTestID = 57;
+    gTestID = 39;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char ifName[64] = "";
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
+
+    strcpy(vlanID, valid_vlanid[0]);
 
     UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with invalid ifName: Empty string, vlanID: %s", vlanID);
     int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
@@ -2297,7 +1653,7 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge(void
  * The p_is_this_interface_available_in_linux_bridge function is tested in this test case to ensure that it returns an error status when an empty string is passed as an argument.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 058 @n
+ * **Test Case ID:** 040 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2311,7 +1667,7 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge(void
  */
 void test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge(void)
 {
-    gTestID = 58;
+    gTestID = 40;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -2337,7 +1693,7 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge(void
  * This test verifies whether the API `_is_this_interface_available_in_linux_bridge` correctly handles the scenario where an invalid vlanID is provided. The test checks if the API returns the expected result in this scenario.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 059 @n
+ * **Test Case ID:** 041 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2347,102 +1703,31 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge(void
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = "0" | ifName = Value from config file, vlanID = "0"| RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = Invalid value| ifName = Value from config file, vlanID = Invalid value| RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge(void)
+void test_l1_vlan_hal_negative3_is_this_interface_available_in_linux_bridge(void)
 {
-    gTestID = 59;
+    gTestID = 41;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
-    char vlanID[5] = "0";
+    char *vlanID;
+    int vlanIDs[MAX_GROUPNAME_SIZE] = {0}; // Local array to keep track of VLAN IDs
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        vlanID = generateRandomVLANID(vlanIDs, i);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: %s", ifName, vlanID);
         int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
+
+        free(vlanID);
     }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test case to check if a given interface is available in the Linux bridge for an invalid VLAN ID above the maximum range.
- *
- * This test case checks if the function "_is_this_interface_available_in_linux_bridge" returns the correct result when an invalid vlanID  is provided.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 060 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If the user chooses to run the test in interactive mode, they must select this test case via the console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :--------------: | ----------- | --------- | --------------- | ----- |
- * |      01     | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = "4095" | ifName = Value from config file, vlanID = "4095" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge(void)
-{
-    gTestID = 60;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char ifName[64] = {"\0"};
-    char vlanID[5] = "4095";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-
-        UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: %s", ifName, vlanID);
-        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
-
-        UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns:%d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test to check the behaviour of the API _is_this_interface_available_in_linux_bridge when the interface name is invalid.
- *
- * This test is to verify '_is_this_interface_available_in_linux_bridge' returns error code when it is invoked with invalid interface name(NULL).
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 061 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description                                                                             | Test Data                              | Expected Result | Notes              |
- * | :--------------: | --------------------------------------------------------------------------------------- | -------------------------------------- | --------------- | ------------------ |
- * |       01         | Invoking _is_this_interface_available_in_linux_bridge with ifName = NULL, vlanID = "10"| ifName = NULL, vlanID = "10"| RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge(void)
-{
-    gTestID = 61;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char *ifName = NULL;
-    char vlanID[5] = "10";
-
-    UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with invalid ifName: NULL and valid vlanID: %s", vlanID);
-    int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
-
-    UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
-
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
 
@@ -2453,7 +1738,7 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge(void
  * where the VLAN ID provided is null. It verifies that the function returns an error code in this case.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 062 @n
+ * **Test Case ID:** 042 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2465,9 +1750,9 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge(void
  * | :----: | --------- | ---------- |-------------- | ----- |
  * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = NULL| ifName = Value from config file, vlanID = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge(void)
+void test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge(void)
 {
-    gTestID = 62;
+    gTestID = 42;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -2488,52 +1773,12 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge(void
 }
 
 /**
- * @brief Test case to check if the interface is available in Linux bridge with an invalid VLAN ID containing alphabets
- *
- * This test case checks the functionality of the internal function _is_this_interface_available_in_linux_bridge() when an interface name and an invalid VLAN ID containing alphabets are provided as inputs. The objective of this test is to verify if the function correctly detects the invalid VLAN ID and returns an error.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 063 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If the user chooses to run the test in interactive mode, the test case has to be selected via the console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_linux_bridge with valid ifName = Value from config file, vlanID = "abc" | ifName = Value from config file, vlanID = "abc" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge(void)
-{
-    gTestID = 63;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char ifName[64] = {"\0"};
-    char vlanID[5] = "abc";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-
-        UT_LOG_DEBUG("Invoking _is_this_interface_available_in_linux_bridge with valid ifName: %s and invalid vlanID: %s", ifName, vlanID);
-        int result = _is_this_interface_available_in_linux_bridge(ifName, vlanID);
-
-        UT_LOG_DEBUG("_is_this_interface_available_in_linux_bridge API returns : %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief This test case verifies whether the given interface is available in the specified Linux bridge and VLAN ID.
  *
  * This test case tests the functionality of the function _is_this_interface_available_in_given_linux_bridge() by checking if the specified interface is available in the specified Linux bridge and VLAN ID.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 064 @n
+ * **Test Case ID:** 043 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2543,22 +1788,23 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge(void
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, valid br_name = Value from config file, vlanID = "10"  | ifName = Value from config file, br_name = Value from config file, vlanID = "10" |  RETURN_OK | Should be successful |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, valid br_name = Value from config file, vlanID = Value from config file  | ifName = Value from config file, br_name = Value from config file, vlanID = Value from config file |  RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 64;
+    gTestID = 43;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and vlanID = %s", ifName, br_name, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
@@ -2575,7 +1821,7 @@ void test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridg
  * This test case checks the functionality of the function "_is_this_interface_available_in_given_linux_bridge" by verifying if the specified interface is available in the given Linux bridge.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 065 @n
+ * **Test Case ID:** 044 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2585,21 +1831,22 @@ void test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | --------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with ifName = "", br_name = "brlan0", vlanID = "10"| ifName = "", br_name = "brlan0", vlanID = "10" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with ifName = "", br_name = Value from config file, vlanID = Value from config file| ifName = "", br_name = Value from config file, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 65;
+    gTestID = 44;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = "";
     char br_name[64] = {"\0"};
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(br_name, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with invalid ifName = Empty string, valid br_name = %s and vlanID = %s", br_name, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
@@ -2616,7 +1863,7 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridg
  * This test invokes the function _is_this_interface_available_in_given_linux_bridge with different input arguments to check if the interface is correctly identified or not in the given Linux bridge for a specific VLAN ID.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 066 @n
+ * **Test Case ID:** 045 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2626,21 +1873,22 @@ void test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, br_name = "", vlanID = "10" | ifName = Value from config file, br_name = "", vlanID = "10" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, br_name = "", vlanID = Value from config file | ifName = Value from config file, br_name = "", vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 66;
+    gTestID = 45;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
     char br_name[64] = "";
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, invalid br_name = Empty string and valid vlanID = %s", ifName, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
@@ -2657,7 +1905,7 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridg
  * This test case is used to check if the _is_this_interface_available_in_given_linux_bridge API returns an error when the interface name and bridge name are valid but VLAN ID is empty.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 067 @n
+ * **Test Case ID:** 046 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2671,7 +1919,7 @@ void test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridg
  */
 void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 67;
+    gTestID = 46;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -2699,7 +1947,7 @@ void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridg
  * This test verifies the functionality of the "_is_this_interface_available_in_given_linux_bridge" function when it is invoked with invalid vlanID. The test expects the function to return an error value.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 068 @n
+ * **Test Case ID:** 047 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2709,70 +1957,33 @@ void test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, valid br_name = Value from config file, vlanID = "0" | ifName = Value from config file, br_name = Value from config file, vlanID = "0" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, valid br_name = Value from config file, vlanID = Invalid value | ifName = Value from config file, br_name = Value from config file, vlanID = Invalid value | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge(void)
+void test_l1_vlan_hal_negative4_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 68;
+    gTestID = 47;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
     char br_name[64] = {"\0"};
-    char vlanID[5] = "0";
+    char *vlanID;
+    int vlanIDs[MAX_GROUPNAME_SIZE] = {0}; // Local array to keep track of VLAN IDs
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
         strcpy(br_name, br_Name[i]);
 
-        UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = %s", ifName, br_name, vlanID);
-        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
-
-        UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief This test is used to check the behaviour of the function _is_this_group_available_in_linux_bridge when invoked with an invalid vlanID.
- *
- * This test case checks whether the _is_this_interface_available_in_given_linux_bridge function returns error code when it is invoked with an invalid vlanID.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 069 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, valid br_name = Value from config file, vlanID = 4095 | ifName = Value from config file, br_name = Value from config file, vlanID = 4095 | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge(void)
-{
-    gTestID = 69;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char ifName[64] = {"\0"};
-    char br_name[64] = {"\0"};
-    char vlanID[64] = "4095";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-        strcpy(br_name, br_Name[i]);
+        vlanID = generateRandomVLANID(vlanIDs, i);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, br_name = %s and invalid vlanID = %s", ifName, br_name, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
 
         UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API returns: %d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
+
+        free(vlanID);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -2783,7 +1994,7 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridg
  * This test case checks if the function correctly handles the case when ifName is NULL. It verifies if the function returns an error value when ifName is NULL.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 070 @n
+ * **Test Case ID:** 048 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2793,21 +2004,22 @@ void test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:**  @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with ifName = NULL, br_name = "brlan0", vlanID = "10" | ifName = NULL, br_name = "brlan0", vlanID = "10" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with ifName = NULL, br_name = Value from config file, vlanID = Value from config file | ifName = NULL, br_name = Value from config file, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge(void)
+void test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 70;
+    gTestID = 48;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char *ifName = NULL;
     char br_name[64] = {"\0"};
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(br_name, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with invalid ifName = NULL, valid br_name = %s and vlanID = %s", br_name, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
@@ -2824,7 +2036,7 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridg
  * * This test is to verify the behavior of the _is_this_interface_available_in_given_linux_bridge function when the br_name is NULL. The function should return an error value.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 071 @n
+ * **Test Case ID:** 049 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2834,21 +2046,22 @@ void test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, br_name = NULL, vlanID = "10" | ifName = Value from config file, br_name = NULL, vlanID = "10" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, br_name = NULL, vlanID = Value from config file | ifName = Value from config file, br_name = NULL, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge(void)
+void test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 71;
+    gTestID = 49;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
     char *br_name = NULL;
-    char vlanID[5] = "10";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, invalid br_name = NULL and valid vlanID = %s", ifName, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
@@ -2865,7 +2078,7 @@ void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridg
  * The test checks the functionality of the function "_is_this_interface_available_in_given_linux_bridge" by passing a specific interface name and bridge name. The function returns the result of the check.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 072 @n
+ * **Test Case ID:** 050 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2877,9 +2090,9 @@ void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridg
  * | :--------------: | ------------------------------------------------------------------------------------------| -------------------------------------------------- | -------------------------| ---------------|
  * |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, valid br_name = Value from config file, vlanID = NULL| ifName = Value from config file, br_name = Value from config file, vlanID = NULL | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge(void)
+void test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 72;
+    gTestID = 50;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -2907,7 +2120,7 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridg
  * This test checks whether an interface is available in a specific Linux bridge by calling the function _is_this_interface_available_in_given_linux_bridge.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 073 @n
+ * **Test Case ID:** 051 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -2917,21 +2130,23 @@ void test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridg
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :--------------: | ----------- | --------- | --------------- | ----- |
- * |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, br_name = "brl@n0", vlanID = "10" | ifName = Value from config file, br_name = "brl@n0", vlanID = "10" | RETURN_ERR | Should Fail |
+ * |       01         | Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = Value from config file, br_name = Value from config file, vlanID = Value from config file | ifName = Value from config file, br_name = Value from config file, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
-void test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge(void)
+void test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge(void)
 {
-    gTestID = 73;
+    gTestID = 51;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char ifName[64] = {"\0"};
-    char br_name[64] = "brl@n0";
-    char vlanID[5] = "10";
+    char br_name[64] = {"\0"};
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(ifName, if_Name[i]);
+        strcpy(br_name, invalid_brName[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid ifName = %s, invalid br_name = %s anf valid vlanID = %s", ifName, br_name, vlanID);
         int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
@@ -2943,55 +2158,12 @@ void test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_brid
 }
 
 /**
- * @brief This test is used to verify if an interface is available in a given Linux bridge when an invalid VLAN ID is provided.
- *
- * This test case verifies the behavior of the _is_this_interface_available_in_given_linux_bridge() function when an invalid VLAN ID is provided.
- *
- * **Test Group ID:** Basic: 01 / Module: 02 @n
- * **Test Case ID:** 074 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking _is_this_interface_available_in_given_linux_bridge valid ifName = Value from config file, valid br_name = Value from config file, vlanID = "abc"  | ifName = Value from config file, br_name = Value from config file, vlanID = "abc" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge(void)
-{
-    gTestID = 74;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char ifName[64] = {"\0"};
-    char br_name[64] = {"\0"};
-    char vlanID[5] = "abc";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(ifName, if_Name[i]);
-        strcpy(br_name, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking _is_this_interface_available_in_given_linux_bridge with valid f_name = %s, br_name = %s and invalid vlanID = %s", ifName, br_name, vlanID);
-        int result = _is_this_interface_available_in_given_linux_bridge(ifName, br_name, vlanID);
-
-        UT_LOG_DEBUG("_is_this_interface_available_in_given_linux_bridge API retuns: %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief This test is used to verify the functionality of the insert_VLAN_ConfigEntry API.
  *
  * The objective of this test is to ensure that the insert_VLAN_ConfigEntry function successfully inserts a VLAN configuration entry.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 075 @n
+ * **Test Case ID:** 052 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3001,20 +2173,21 @@ void test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_brid
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = Value from config file, vlanID = "100"| groupName = Value from config file, vlanID = "100" | RETURN_OK | Should be successful |
+ * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = Value from config file, vlanID = Value from config file| groupName = Value from config file, vlanID = Value from config file | RETURN_OK | Should be successful |
  */
 void test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 75;
+    gTestID = 52;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
-    char vlanID[5] = "100";
+    char vlanID[5] = {"\0"};
 
     for (i = 0; i < num_ifName; i++)
     {
         strcpy(groupName, br_Name[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
         int result = insert_VLAN_ConfigEntry(groupName, vlanID);
@@ -3026,120 +2199,12 @@ void test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry(void)
 }
 
 /**
- * @brief Test to validate the functionality of insert_VLAN_ConfigEntry().
- *
- * This test is used to verify the functionality of the insert_VLAN_ConfigEntry() function. The test case inserts a VLAN configuration entry with a specified VLAN ID into the specified group.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 076 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * Test Procedure:
- * | Variation / Step | Description                                                  | Test Data                          | Expected Result                | Notes              |
- * | :--------------: | ------------------------------------------------------------ | ---------------------------------- | ------------------------------ | ------------------ |
- * |       01         | Invoking insert_VLAN_ConfigEntry with valid groupName = Value from config file, vlanID = "1"  | groupName = Value from config file, vlanID = "1" | result = RETURN_OK  | Should be successful |
- */
-void test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry(void)
-{
-    gTestID = 76;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char vlanID[5] = "1";
-
-    for (i = 0; i < num_ifName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
-
-        UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns : %d", result);
-        UT_ASSERT_EQUAL(result, RETURN_OK);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test the functionality of the insert_VLAN_ConfigEntry function.
- *
- * This test case verifies that the insert_VLAN_ConfigEntry function correctly inserts a VLAN configuration entry.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 077 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = "brlan403", vlanID = "4094" | groupName = "brlan403", vlanID = "4094" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive3_insert_VLAN_ConfigEntry(void)
-{
-    gTestID = 77;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-    char groupName[64] = "brlan403";
-    char vlanID[5] = "4094";
-
-    UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
-
-    UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns : %d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test function for the insert_VLAN_ConfigEntry API
- *
- * This test function checks whether the insert_VLAN_ConfigEntry API correctly inserts a VLAN configuration entry into a specified group.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 078 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = "brlan7", vlanID = "2000" | groupName = "brlan7", vlanID = "2000" | RETURN_OK | Should be successful |
- */
-void test_l1_vlan_hal_positive4_insert_VLAN_ConfigEntry(void)
-{
-    gTestID = 78;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-    char groupName[64] = "brlan7";
-    char vlanID[5] = "2000";
-
-    UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s, vlanID: %s", groupName, vlanID);
-    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
-
-    UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-    UT_ASSERT_EQUAL(result, RETURN_OK);
-
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
  * @brief This test case is used to validate the behavior of the insert_VLAN_ConfigEntry function when there is a negative scenario.
  *
  * The purpose of this test is to verify the behavior of the insert_VLAN_ConfigEntry function when an incorrect groupName parameter is provided.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 079 @n
+ * **Test Case ID:** 053 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3150,14 +2215,16 @@ void test_l1_vlan_hal_positive4_insert_VLAN_ConfigEntry(void)
  *
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = NULL, vlanID = "100"  | groupName = NULL, vlanID = "100" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = NULL, vlanID = Value from config file | groupName = NULL, vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 79;
+    gTestID = 53;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char *groupName = NULL;
-    char vlanID[5] = "100";
+    char vlanID[5] = {"\0"};
+
+    strcpy(vlanID, valid_vlanid[0]);
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: NULL and valid vlanID: %s", vlanID);
     int result = insert_VLAN_ConfigEntry(groupName, vlanID);
@@ -3174,7 +2241,7 @@ void test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry(void)
  * This test checks if insert_VLAN_ConfigEntry correctly handles the case when the VLAN ID is NULL.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 080 @n
+ * **Test Case ID:** 054 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3188,7 +2255,7 @@ void test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 80;
+    gTestID = 54;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -3214,7 +2281,7 @@ void test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry(void)
  * This test case verifies the behavior of the insert_VLAN_ConfigEntry function when the groupName parameter is empty and the vlanID parameter is valid. The objective of this test is to ensure that the function handles this scenario correctly and returns the expected error code.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 081 @n
+ * **Test Case ID:** 055 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3224,15 +2291,17 @@ void test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description                                                         | Test Data                      | Expected Result | Notes       |
  * | :--------------: | --------------------------------------------------------------------| ------------------------------ | --------------- | ------------|
- * |       01         | Invoking insert_VLAN_ConfigEntry with groupName = "", vlanID = "100"| groupName = "", vlanID = "100" | RETURN_ERR | Should Fail |
+ * |       01         | Invoking insert_VLAN_ConfigEntry with groupName = "", vlanID = Value from config file| groupName = "", vlanID = Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 81;
+    gTestID = 55;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
-    char vlanID[5] = "100";
+    char vlanID[5] = {"\0"};
+
+    strcpy(vlanID, valid_vlanid[0]);
 
     UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: Empty string and valid vlanID: %s", vlanID);
     int result = insert_VLAN_ConfigEntry(groupName, vlanID);
@@ -3249,7 +2318,7 @@ void test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry(void)
  * The objective of this test is to verify that the insert_VLAN_ConfigEntry function handles the case when the vlanID argument is empty correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 082 @n
+ * **Test Case ID:** 056 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3263,7 +2332,7 @@ void test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 82;
+    gTestID = 56;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -3289,7 +2358,7 @@ void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void)
  * This test case checks whether the insert_VLAN_ConfigEntry function correctly handles the scenario when an invalid group name is provided. The function should return an error in this case.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 083 @n
+ * **Test Case ID:** 057 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3299,22 +2368,29 @@ void test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | --------------------------------- | ---------------- | ------ |
- * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = "brlan114", vlanID = "100"  | groupName = "brlan114", vlanID = "100" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking insert_VLAN_ConfigEntry with groupName = Invalid value from config file, vlanID = Value from config file  | groupName =  Invalid value from config file, vlanID =  Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 83;
+    gTestID = 57;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    char groupName[64] = "brlan114";
-    char vlanID[5] = "100";
+    char groupName[64];
+    char vlanID[5] = {"\0"};
+    int i = 0;
+    int result;
 
-    UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: %s and valid vlanID: %s", groupName, vlanID);
-    int result = insert_VLAN_ConfigEntry(groupName, vlanID);
+    for (i = 0; i < num_brName; i++)
+    {
+        strcpy(groupName, invalid_brName[i]);
+        strcpy(vlanID, valid_vlanid[i]);
 
-    UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
+        UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with invalid groupName: %s and valid vlanID: %s", groupName, vlanID);
+        result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
+        UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
+    }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
 
@@ -3324,7 +2400,7 @@ void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void)
  * This test case is to ensure that the insert_VLAN_ConfigEntry function behaves correctly when an invalid VLAN ID is provided. It verifies that the function returns an error code when the VLAN ID is invalid.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 084 @n
+ * **Test Case ID:** 058 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3338,142 +2414,27 @@ void test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry(void)
 {
-    gTestID = 84;
+    gTestID = 58;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
     char groupName[64] = {"\0"};
-    char vlanID[5] = "0";
+    char *vlanID;
+    int vlanIDs[MAX_GROUPNAME_SIZE] = {0}; // Local array to keep track of VLAN IDs
 
     for (i = 0; i < num_brName; i++)
     {
         strcpy(groupName, br_Name[i]);
+
+        vlanID = generateRandomVLANID(vlanIDs, i);
 
         UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid vlanID: %s", groupName, vlanID);
         int result = insert_VLAN_ConfigEntry(groupName, vlanID);
 
         UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
         UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
 
-/**
- * @brief This test case is used to verify the behavior of the insert_VLAN_ConfigEntry function when the vlanID parameter is negative.
- *
- * This test focuses on testing the error handling of the insert_VLAN_ConfigEntry function when the vlanID parameter is passed as a negative value. The test checks if the function correctly returns an error code when the vlanID is negative.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 085 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If the user chooses to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- |-------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = Value from config file, vlanID = "-1" | groupName = Value from config file, vlanID = "-1" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry(void)
-{
-    gTestID = 85;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char vlanID[5] = "-1";
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid lanID: %s", groupName, vlanID);
-        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
-
-        UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief This test case is used to verify the behavior of the insert_VLAN_ConfigEntry function when it is invoked with invalid argument.
- *
- * This test focuses on testing the error handling of the insert_VLAN_ConfigEntry function when the vlanID parameter is passed as a negative value. The test checks if the function correctly returns an error code when the vlanID is invalid.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 086 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console @n
- *
- * **Test Procedure:** @n
- * | Variation / Step   | Description | Test Data | Expected Result | Notes |
- * | :----: | ----------------------------------------------------------------- | ---------- | --------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = Value from config file, vlanID = "5000"| groupName = Value from config file, vlanID = "5000" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry(void)
-{
-    gTestID = 86;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char vlanID[5] = "5000";
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %sa and invalid vlanID: %s", groupName, vlanID);
-        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
-
-        UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
-    }
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test case to verify the behavior of the insert_VLAN_ConfigEntry function when invalid VLAN ID is provided.
- *
- * This test case checks whether the insert_VLAN_ConfigEntry function returns an error when an invalid VLAN ID is provided as input.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 087 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | --------------- | ----- |
- * | 01 | Invoking insert_VLAN_ConfigEntry with valid groupName = Value from config file, vlanID = "1a2b" | groupName = Value from config file, vlanID = "1a2b" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void)
-{
-    gTestID = 87;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    int i = 0;
-    char groupName[64] = {"\0"};
-    char vlanID[5] = "1a2b";
-
-    for (i = 0; i < num_brName; i++)
-    {
-        strcpy(groupName, br_Name[i]);
-
-        UT_LOG_DEBUG("Invoking insert_VLAN_ConfigEntry with valid groupName: %s and invalid vlanID: %s", groupName, vlanID);
-        int result = insert_VLAN_ConfigEntry(groupName, vlanID);
-
-        UT_LOG_DEBUG("insert_VLAN_ConfigEntry API returns:%d", result);
-        UT_ASSERT_EQUAL(result, RETURN_ERR);
+        free(vlanID);
     }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
@@ -3484,7 +2445,7 @@ void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void)
  * This test case verifies that the function delete_VLAN_ConfigEntry can successfully delete a VLAN config entry for a given group name. The function is expected to return RETURN_OK if the deletion is successful.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 088 @n
+ * **Test Case ID:** 059 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3498,7 +2459,7 @@ void test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry(void)
 {
-    gTestID = 88;
+    gTestID = 59;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -3523,7 +2484,7 @@ void test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry(void)
  * This test case checks the behavior of the delete_VLAN_ConfigEntry function when an empty string is passed as the group name parameter. The objective of this test is to ensure that the function handles invalid input correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 089 @n
+ * **Test Case ID:** 060 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3537,7 +2498,7 @@ void test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry(void)
 {
-    gTestID = 89;
+    gTestID = 60;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
@@ -3557,7 +2518,7 @@ void test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry(void)
  * This test checks if delete_VLAN_ConfigEntry successfully returns an error when the group name passed to it is NULL.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 090 @n
+ * **Test Case ID:** 061 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3571,7 +2532,7 @@ void test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry(void)
 {
-    gTestID = 90;
+    gTestID = 61;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char *groupName = NULL;
@@ -3591,7 +2552,7 @@ void test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry(void)
  * This test case checks whether the delete_VLAN_ConfigEntry function returns an expected error code (RETURN_ERR) when an invalid group name (random_string) is provided as input.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 091 @n
+ * **Test Case ID:** 062 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3601,55 +2562,26 @@ void test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry(void)
  * **Test Procedure:** @n
  * | Variation / Step | Description | Test Data | Expected Result | Notes |
  * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking delete_VLAN_ConfigEntry with groupName = "brlan115" | groupName = "brlan115" | RETURN_ERR | Should Fail |
+ * | 01 | Invoking delete_VLAN_ConfigEntry with groupName =  Value from config file | groupName =  Value from config file | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative3_delete_VLAN_ConfigEntry(void)
 {
-    gTestID = 91;
+    gTestID = 62;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    char groupName[64] = "brlan115";
+    char groupName[64] = {"\0"};
+    int i = 0;
 
-    UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName:%s", groupName);
-    int result = delete_VLAN_ConfigEntry(groupName);
+    for (i = 0; i < num_invalid_brName; i++)
+    {
+        strcpy(groupName, invalid_brName[i]);
 
-    UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
+        UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName:%s", groupName);
+        int result = delete_VLAN_ConfigEntry(groupName);
 
-    UT_LOG_INFO("Out %s\n", __FUNCTION__);
-}
-
-/**
- * @brief Test to validate the behavior of delete_VLAN_ConfigEntry when the input groupName is a substring of a valid groupName.
- *
- * This test is intended to verify the behavior of delete_VLAN_ConfigEntry when the input groupName is a substring of a valid groupName. The test checks if the function returns a negative error code.
- *
- * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 092 @n
- * **Priority:** High @n@n
- *
- * **Pre-Conditions:** None @n
- * **Dependencies:** None @n
- * **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console. @n
- *
- * **Test Procedure:** @n
- * | Variation / Step | Description | Test Data | Expected Result | Notes |
- * | :----: | --------- | ---------- | -------------- | ----- |
- * | 01 | Invoking delete_VLAN_ConfigEntry with groupName = "brla" | groupName = "brla" | RETURN_ERR | Should Fail |
- */
-void test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry(void)
-{
-    gTestID = 92;
-    UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
-
-    char groupName[64] = "brla";
-
-    UT_LOG_DEBUG("Invoking delete_VLAN_ConfigEntry with invalid groupName:%s", groupName);
-    int result = delete_VLAN_ConfigEntry(groupName);
-
-    UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
-    UT_ASSERT_EQUAL(result, RETURN_ERR);
-
+        UT_LOG_DEBUG("delete_VLAN_ConfigEntry API returns :%d", result);
+        UT_ASSERT_EQUAL(result, RETURN_ERR);
+    }
     UT_LOG_INFO("Out %s\n", __FUNCTION__);
 }
 
@@ -3659,7 +2591,7 @@ void test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry(void)
  * The objective of this test is to verify whether the API can successfully retrieve the VLAN ID for a given group name.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 093 @n
+ * **Test Case ID:** 063 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3673,7 +2605,7 @@ void test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry(void)
  */
 void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void)
 {
-    gTestID = 93;
+    gTestID = 63;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -3713,7 +2645,7 @@ void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void)
  * This test case checks the behavior of get_vlanId_for_GroupName function when provided with a NULL groupName parameter.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 094 @n
+ * **Test Case ID:** 064 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None. @n
@@ -3727,7 +2659,7 @@ void test_l1_vlan_hal_positive1_get_vlanId_for_GroupName(void)
  */
 void test_l1_vlan_hal_negative1_get_vlanId_for_GroupName(void)
 {
-    gTestID = 94;
+    gTestID = 64;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     const char *groupName = NULL;
@@ -3748,7 +2680,7 @@ void test_l1_vlan_hal_negative1_get_vlanId_for_GroupName(void)
  * This test case checks the behavior of the function get_vlanId_for_GroupName when the groupName parameter is NULL.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 095 @n
+ * **Test Case ID:** 065 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3763,7 +2695,7 @@ void test_l1_vlan_hal_negative1_get_vlanId_for_GroupName(void)
  */
 void test_l1_vlan_hal_negative2_get_vlanId_for_GroupName(void)
 {
-    gTestID = 95;
+    gTestID = 65;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     int i = 0;
@@ -3789,7 +2721,7 @@ void test_l1_vlan_hal_negative2_get_vlanId_for_GroupName(void)
  * The objective of this test is to verify the functionality of the get_vlanId_for_GroupName function when the group name provided is empty.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 096 @n
+ * **Test Case ID:** 066 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3803,7 +2735,7 @@ void test_l1_vlan_hal_negative2_get_vlanId_for_GroupName(void)
  */
 void test_l1_vlan_hal_negative3_get_vlanId_for_GroupName(void)
 {
-    gTestID = 96;
+    gTestID = 66;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char groupName[64] = "";
@@ -3824,7 +2756,7 @@ void test_l1_vlan_hal_negative3_get_vlanId_for_GroupName(void)
  * This test verifies the behavior of the get_vlanId_for_GroupName() function when an invalid group name is provided.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 97 @n
+ * **Test Case ID:** 67 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3834,16 +2766,17 @@ void test_l1_vlan_hal_negative3_get_vlanId_for_GroupName(void)
  * **Test Procedure:** @n
  *| Variation / Step | Description | Test Data | Expected Result | Notes |
  *| :--------------: | ----------- | --------- | --------------- | ----- |
- *|       01         | Invoking get_vlanId_for_GroupName with groupName = "brlan114", vlanID = valid buffer | groupName = "brlan114", vlanID = valid buffer  | RETURN_ERR | Should Fail |
+ *|       01         | Invoking get_vlanId_for_GroupName with groupName =  Value from config file, vlanID = valid buffer | groupName =  Value from config file, vlanID = valid buffer  | RETURN_ERR | Should Fail |
  */
 void test_l1_vlan_hal_negative4_get_vlanId_for_GroupName(void)
 {
-    gTestID = 97;
+    gTestID = 67;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
-    char groupName[64] = "brlan114";
+    char groupName[64];
     char vlanID[5] = {"\0"};
 
+    strcpy(groupName, br_Name[0]);
     UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with invalid groupName: %s and valid vlanID buffer", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
 
@@ -3859,7 +2792,7 @@ void test_l1_vlan_hal_negative4_get_vlanId_for_GroupName(void)
  * The objective of this test is to ensure that the print_all_vlanId_Configuration function is invoked correctly and returns RETURN_OK as expected.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 098 @n
+ * **Test Case ID:** 068 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3873,7 +2806,7 @@ void test_l1_vlan_hal_negative4_get_vlanId_for_GroupName(void)
  */
 void test_l1_vlan_hal_positive1_print_all_vlanId_Configuration(void)
 {
-    gTestID = 98;
+    gTestID = 68;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     UT_LOG_DEBUG("Invoking print_all_vlanId_Configuration");
@@ -3892,7 +2825,7 @@ void test_l1_vlan_hal_positive1_print_all_vlanId_Configuration(void)
  * and checks if the output values and return status are as expected.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 99 @n
+ * **Test Case ID:** 69 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3906,7 +2839,7 @@ void test_l1_vlan_hal_positive1_print_all_vlanId_Configuration(void)
  */
 void test_l1_vlan_hal_positive1_get_shell_outputbuffer(void)
 {
-    gTestID = 99;
+    gTestID = 69;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char cmd[512] = "brctl show | grep -w brlan0";
@@ -3937,7 +2870,7 @@ void test_l1_vlan_hal_positive1_get_shell_outputbuffer(void)
  * This test case verifies the behavior of the _get_shell_outputbuffer function when a NULL command is passed.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 100 @n
+ * **Test Case ID:** 070 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3951,7 +2884,7 @@ void test_l1_vlan_hal_positive1_get_shell_outputbuffer(void)
  */
 void test_l1_vlan_hal_negative1_get_shell_outputbuffer(void)
 {
-    gTestID = 100;
+    gTestID = 70;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char *cmd = NULL;
@@ -3971,7 +2904,7 @@ void test_l1_vlan_hal_negative1_get_shell_outputbuffer(void)
  * This test case checks if the _get_shell_outputbuffer function handles the NULL out buffer properly and does not result in any undefined behavior.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 101 @n
+ * **Test Case ID:** 071 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -3985,7 +2918,7 @@ void test_l1_vlan_hal_negative1_get_shell_outputbuffer(void)
  */
 void test_l1_vlan_hal_negative2_get_shell_outputbuffer(void)
 {
-    gTestID = 101;
+    gTestID = 71;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char cmd[512] = "brctl show | grep -w brlan0";
@@ -4005,7 +2938,7 @@ void test_l1_vlan_hal_negative2_get_shell_outputbuffer(void)
  * This test case is used to verify the correctness of the _get_shell_outputbuffer_res function when provided with valid input values.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 102 @n
+ * **Test Case ID:** 072 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -4019,7 +2952,7 @@ void test_l1_vlan_hal_negative2_get_shell_outputbuffer(void)
  */
 void test_l1_vlan_hal_positive1_get_shell_outputbuffer_res(void)
 {
-    gTestID = 102;
+    gTestID = 72;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     char out[512] = {"\0"};
     int len = 512;
@@ -4055,7 +2988,7 @@ void test_l1_vlan_hal_positive1_get_shell_outputbuffer_res(void)
  * This test case checks whether the _get_shell_outputbuffer_res function behaves as expected when the file pointer is NULL. It verifies the return status of the function.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 103 @n
+ * **Test Case ID:** 73 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -4069,7 +3002,7 @@ void test_l1_vlan_hal_positive1_get_shell_outputbuffer_res(void)
  */
 void test_l1_vlan_hal_negative1_get_shell_outputbuffer_res(void)
 {
-    gTestID = 103;
+    gTestID = 73;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
     FILE *fp = NULL;
     char out[512] = {"\0"};
@@ -4088,7 +3021,7 @@ void test_l1_vlan_hal_negative1_get_shell_outputbuffer_res(void)
  * is to verify that the function handles this scenario correctly.
  *
  * **Test Group ID:** Basic: 01 @n
- * **Test Case ID:** 104 @n
+ * **Test Case ID:** 74 @n
  * **Priority:** High @n@n
  *
  * **Pre-Conditions:** None @n
@@ -4102,7 +3035,7 @@ void test_l1_vlan_hal_negative1_get_shell_outputbuffer_res(void)
  */
 void test_l1_vlan_hal_negative2_get_shell_outputbuffer_res(void)
 {
-    gTestID = 104;
+    gTestID = 74;
     UT_LOG_INFO("In %s [%02d%03d]\n", __FUNCTION__, gTestGroup, gTestID);
 
     char *out = NULL;
@@ -4149,15 +3082,11 @@ int test_vlan_hal_l1_register(void)
 
     // Allocate memory for br_Name array
     br_Name = (char **)malloc(num_brName * sizeof(char *));
-    for (i = 0; i < num_brName; i++)
-    {
-        br_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-    }
-
     // Fetch and store bridge names
     printf("Checking br_Name values:\n");
     for (i = 0; i < num_brName; i++)
     {
+        br_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
         sprintf(br_Namex, "vlan/config/br_Name/%d", i);
         UT_KVP_PROFILE_GET_STRING(br_Namex, br_Name[i]);
         printf("%s \n", br_Name[i]);
@@ -4169,35 +3098,57 @@ int test_vlan_hal_l1_register(void)
 
     // Allocate memory for if_Name array
     if_Name = (char **)malloc(num_ifName * sizeof(char *));
-    for (i = 0; i < num_ifName; i++)
-    {
-        if_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-    }
-
     // Fetch and store interface names
     printf("Checking if_Name values:\n");
     for (i = 0; i < num_ifName; i++)
     {
+        if_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
         sprintf(if_Namex, "vlan/config/if_Name/%d", i);
         UT_KVP_PROFILE_GET_STRING(if_Namex, if_Name[i]);
         printf("%s \n", if_Name[i]);
     }
 
+    char vlanid[MAX_SIZE];
+    // Get the count of invalid_brName entries
+    num_vlanid = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
+    printf("Checking vlan_id list count: %d \n", num_vlanid);
+
+    // Allocate memory for invalid_brName array
+    valid_vlanid = (char **)malloc(num_vlanid * sizeof(char *));
+    printf("Checking valid vlanID values:\n");
+    for (i = 0; i < num_vlanid; i++)
+    {
+        valid_vlanid[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(vlanid, "vlan/config/vlanID/%d", i);
+        UT_KVP_PROFILE_GET_STRING(vlanid, valid_vlanid[i]);
+        printf("%s \n", valid_vlanid[i]);
+    }
+
+    char invalid_brNamex[MAX_SIZE];
+
+    // Get the count of invalid_brName entries
+    num_invalid_brName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
+    printf("Checking invalid_brName list count: %d \n", num_invalid_brName);
+
+    // Allocate memory for invalid_brName array
+    invalid_brName = (char **)malloc(num_invalid_brName * sizeof(char *));
+    printf("Checking invalid br_Name values:\n");
+    for (i = 0; i < num_invalid_brName; i++)
+    {
+        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
+        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
+        printf("%s \n", invalid_brName[i]);
+    }
+
     // Add tests to the suite
     UT_add_test(pSuite, "l1_vlan_hal_positive1_addGroup", test_l1_vlan_hal_positive1_addGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_positive2_addGroup", test_l1_vlan_hal_positive2_addGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_positive3_addGroup", test_l1_vlan_hal_positive3_addGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_positive4_addGroup", test_l1_vlan_hal_positive4_addGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_addGroup", test_l1_vlan_hal_negative1_addGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_addGroup", test_l1_vlan_hal_negative2_addGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative3_addGroup", test_l1_vlan_hal_negative3_addGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative4_addGroup", test_l1_vlan_hal_negative4_addGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative5_addGroup", test_l1_vlan_hal_negative5_addGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative6_addGroup", test_l1_vlan_hal_negative6_addGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_negative7_addGroup", test_l1_vlan_hal_negative7_addGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_negative8_addGroup", test_l1_vlan_hal_negative8_addGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_positive1_delGroup", test_l1_vlan_hal_positive1_delGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_positive2_delGroup", test_l1_vlan_hal_positive2_delGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_delGroup", test_l1_vlan_hal_negative1_delGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_delGroup", test_l1_vlan_hal_negative2_delGroup);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_addInterface", test_l1_vlan_hal_positive1_addInterface);
@@ -4209,9 +3160,6 @@ int test_vlan_hal_l1_register(void)
     UT_add_test(pSuite, "l1_vlan_hal_negative6_addInterface", test_l1_vlan_hal_negative6_addInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative7_addInterface", test_l1_vlan_hal_negative7_addInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative8_addInterface", test_l1_vlan_hal_negative8_addInterface);
-    UT_add_test(pSuite, "l1_vlan_hal_negative9_addInterface", test_l1_vlan_hal_negative9_addInterface);
-    UT_add_test(pSuite, "l1_vlan_hal_negative10_addInterface", test_l1_vlan_hal_negative10_addInterface);
-    UT_add_test(pSuite, "l1_vlan_hal_positive1_delInterface", test_l1_vlan_hal_positive1_delInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_delInterface", test_l1_vlan_hal_negative1_delInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_delInterface", test_l1_vlan_hal_negative2_delInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative3_delInterface", test_l1_vlan_hal_negative3_delInterface);
@@ -4219,63 +3167,43 @@ int test_vlan_hal_l1_register(void)
     UT_add_test(pSuite, "l1_vlan_hal_negative5_delInterface", test_l1_vlan_hal_negative5_delInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative6_delInterface", test_l1_vlan_hal_negative6_delInterface);
     UT_add_test(pSuite, "l1_vlan_hal_negative7_delInterface", test_l1_vlan_hal_negative7_delInterface);
-    UT_add_test(pSuite, "l1_vlan_hal_negative8_delInterface", test_l1_vlan_hal_negative8_delInterface);
-    UT_add_test(pSuite, "l1_vlan_hal_negative9_delInterface", test_l1_vlan_hal_negative9_delInterface);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_printGroup", test_l1_vlan_hal_positive1_printGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_printGroup", test_l1_vlan_hal_negative1_printGroup);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_printGroup", test_l1_vlan_hal_negative2_printGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_negative4_printGroup", test_l1_vlan_hal_negative4_printGroup);
+    UT_add_test(pSuite, "l1_vlan_hal_negative3_printGroup", test_l1_vlan_hal_negative3_printGroup);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_printAllGroup", test_l1_vlan_hal_positive1_printAllGroup);
-    UT_add_test(pSuite, "l1_vlan_hal_positive1_delete_all_Interfaces", test_l1_vlan_hal_positive1_delete_all_Interfaces);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_delete_all_Interfaces", test_l1_vlan_hal_negative1_delete_all_Interfaces);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_delete_all_Interfaces", test_l1_vlan_hal_negative2_delete_all_Interfaces);
     UT_add_test(pSuite, "l1_vlan_hal_negative3_delete_all_Interfaces", test_l1_vlan_hal_negative3_delete_all_Interfaces);
-    UT_add_test(pSuite, "l1_vlan_hal_negative4_delete_all_Interfaces", test_l1_vlan_hal_negative4_delete_all_Interfaces);
-    UT_add_test(pSuite, "l1_vlan_hal_negative5_delete_all_Interfaces", test_l1_vlan_hal_negative5_delete_all_Interfaces);
-    UT_add_test(pSuite, "l1_vlan_hal_negative6_delete_all_Interfaces", test_l1_vlan_hal_negative6_delete_all_Interfaces);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge", test_l1_vlan_hal_positive1_is_this_group_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge", test_l1_vlan_hal_negative1_is_this_group_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge", test_l1_vlan_hal_negative2_is_this_group_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge", test_l1_vlan_hal_negative4_is_this_group_available_in_linux_bridge);
+    UT_add_test(pSuite, "l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge", test_l1_vlan_hal_negative3_is_this_group_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_positive1_is_this_interface_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_positive2_is_this_interface_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_positive3_is_this_interface_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative1_is_this_interface_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative2_is_this_interface_available_in_linux_bridge);
+    UT_add_test(pSuite, "l1_vlan_hal_negative3_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative3_is_this_interface_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative4_is_this_interface_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative5_is_this_interface_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative6_is_this_interface_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative7_is_this_interface_available_in_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge", test_l1_vlan_hal_negative9_is_this_interface_available_in_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_positive1_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative1_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative2_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative3_is_this_interface_available_in_given_linux_bridge);
+    UT_add_test(pSuite, "l1_vlan_hal_negative4_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative4_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative5_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative6_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative7_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative8_is_this_interface_available_in_given_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative9_is_this_interface_available_in_given_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative11_is_this_interface_available_in_given_linux_bridge);
-    UT_add_test(pSuite, "l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge", test_l1_vlan_hal_negative12_is_this_interface_available_in_given_linux_bridge);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_insert_VLAN_ConfigEntry", test_l1_vlan_hal_positive1_insert_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_positive2_insert_VLAN_ConfigEntry", test_l1_vlan_hal_positive2_insert_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_positive3_insert_VLAN_ConfigEntry", test_l1_vlan_hal_positive3_insert_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_positive4_insert_VLAN_ConfigEntry", test_l1_vlan_hal_positive4_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative1_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative2_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative3_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative3_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative4_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative4_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative5_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative5_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative6_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative6_insert_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_negative7_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative7_insert_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_negative8_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative8_insert_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_negative9_insert_VLAN_ConfigEntry", test_l1_vlan_hal_negative9_insert_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_delete_VLAN_ConfigEntry", test_l1_vlan_hal_positive1_delete_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_delete_VLAN_ConfigEntry", test_l1_vlan_hal_negative1_delete_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_delete_VLAN_ConfigEntry", test_l1_vlan_hal_negative2_delete_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_negative3_delete_VLAN_ConfigEntry", test_l1_vlan_hal_negative3_delete_VLAN_ConfigEntry);
-    UT_add_test(pSuite, "l1_vlan_hal_negative4_delete_VLAN_ConfigEntry", test_l1_vlan_hal_negative4_delete_VLAN_ConfigEntry);
     UT_add_test(pSuite, "l1_vlan_hal_positive1_get_vlanId_for_GroupName", test_l1_vlan_hal_positive1_get_vlanId_for_GroupName);
     UT_add_test(pSuite, "l1_vlan_hal_negative1_get_vlanId_for_GroupName", test_l1_vlan_hal_negative1_get_vlanId_for_GroupName);
     UT_add_test(pSuite, "l1_vlan_hal_negative2_get_vlanId_for_GroupName", test_l1_vlan_hal_negative2_get_vlanId_for_GroupName);
@@ -4290,15 +3218,4 @@ int test_vlan_hal_l1_register(void)
     UT_add_test(pSuite, "l1_vlan_hal_negative2_get_shell_outputbuffer_res", test_l1_vlan_hal_negative2_get_shell_outputbuffer_res);
 
     return 0;
-    for (int i = 0; i < num_brName; i++)
-    {
-        free(br_Name[i]);
-    }
-    free(br_Name);
-
-    for (int i = 0; i < num_ifName; i++)
-    {
-        free(if_Name[i]);
-    }
-    free(if_Name);
 }
