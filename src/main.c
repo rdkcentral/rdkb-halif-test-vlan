@@ -22,6 +22,14 @@
 #include "cJSON.h"
 
 extern int register_hal_l1_tests(void);
+extern char **br_Name;
+extern int num_brName;
+extern char **if_Name;
+extern int num_ifName;
+extern char **invalid_brName;
+extern int num_invalid_brName;
+extern char **valid_vlanid;
+extern int num_vlanid;
 
 int main(int argc, char **argv)
 {
@@ -43,5 +51,26 @@ int main(int argc, char **argv)
     /* Begin test executions */
     UT_run_tests();
 
-        return 0;
+    for (int i = 0; i < num_brName; i++)
+    {
+        free(br_Name[i]);
+    }
+    free(br_Name);
+
+    for (int i = 0; i < num_ifName; i++)
+    {
+        free(if_Name[i]);
+    }
+    free(if_Name);
+    for (int i = 0; i < num_vlanid; i++)
+    {
+        free(valid_vlanid[i]);
+    }
+    free(valid_vlanid);
+    for (int i = 0; i < num_invalid_brName; i++)
+    {
+        free(invalid_brName[i]);
+    }
+    free(invalid_brName);
+    return 0;
 }
