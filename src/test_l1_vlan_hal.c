@@ -59,6 +59,91 @@ char **invalid_brName;
 int num_vlanid;
 char **valid_vlanid;
 
+int fetch_vlan_data()
+{
+    char br_Namex[MAX_SIZE];
+    char if_Namex[MAX_SIZE];
+    char vlanid[MAX_SIZE];
+    char invalid_brNamex[MAX_SIZE];
+    int i;
+
+    // Fetch bridge names
+    num_brName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/br_Name");
+    br_Name = (char **)malloc(num_brName * sizeof(char *));
+    for (i = 0; i < num_brName; i++)
+    {
+        br_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(br_Namex, "vlan/config/br_Name/%d", i);
+        UT_KVP_PROFILE_GET_STRING(br_Namex, br_Name[i]);
+    }
+
+    // Fetch interface names
+    num_ifName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/if_Name");
+    if_Name = (char **)malloc(num_ifName * sizeof(char *));
+    for (i = 0; i < num_ifName; i++)
+    {
+        if_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(if_Namex, "vlan/config/if_Name/%d", i);
+        UT_KVP_PROFILE_GET_STRING(if_Namex, if_Name[i]);
+    }
+
+    // Fetch valid VLAN IDs
+    num_vlanid = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/vlanID");
+    valid_vlanid = (char **)malloc(num_vlanid * sizeof(char *));
+    for (i = 0; i < num_vlanid; i++)
+    {
+        valid_vlanid[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(vlanid, "vlan/config/vlanID/%d", i);
+        UT_KVP_PROFILE_GET_STRING(vlanid, valid_vlanid[i]);
+    }
+
+    // Fetch invalid bridge names
+    num_invalid_brName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
+    invalid_brName = (char **)malloc(num_invalid_brName * sizeof(char *));
+    for (i = 0; i < num_invalid_brName; i++)
+    {
+        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
+        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
+        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
+    }
+    return 0;
+}
+
+int cleanup_vlan_data()
+{
+    int i;
+
+    // Free bridge name memory
+    for (i = 0; i < num_brName; i++)
+    {
+        free(br_Name[i]);
+    }
+    free(br_Name);
+
+    // Free interface name memory
+    for (i = 0; i < num_ifName; i++)
+    {
+        free(if_Name[i]);
+    }
+    free(if_Name);
+
+    // Free valid VLAN ID memory
+    for (i = 0; i < num_vlanid; i++)
+    {
+        free(valid_vlanid[i]);
+    }
+    free(valid_vlanid);
+
+    // Free invalid bridge name memory
+    for (i = 0; i < num_invalid_brName; i++)
+    {
+        free(invalid_brName[i]);
+    }
+    free(invalid_brName);
+
+    return 0;
+}
+
 // Function to generate a random out-of-bound VLAN ID and store it locally
 char *generateRandomVLANID(int vlanIDs[], int groupIndex)
 {
@@ -2776,7 +2861,7 @@ void test_l1_vlan_hal_negative4_get_vlanId_for_GroupName(void)
     char groupName[64];
     char vlanID[5] = {"\0"};
 
-    strcpy(groupName, br_Name[0]);
+    strcpy(groupName, invalid_brName[0]);
     UT_LOG_DEBUG("Invoking get_vlanId_for_GroupName with invalid groupName: %s and valid vlanID buffer", groupName);
     int result = get_vlanId_for_GroupName(groupName, vlanID);
 
@@ -3066,79 +3151,10 @@ static UT_test_suite_t *pSuite = NULL;
 int test_vlan_hal_l1_register(void)
 {
     // Create the test suite
-    pSuite = UT_add_suite("[L1 vlan_hal]", NULL, NULL);
+    pSuite = UT_add_suite("[L1 vlan_hal]", fetch_vlan_data, cleanup_vlan_data);
     if (pSuite == NULL)
     {
         return -1;
-    }
-
-    char br_Namex[MAX_SIZE];
-    char if_Namex[MAX_SIZE];
-    int i;
-
-    // Get the number of bridge names
-    num_brName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/br_Name");
-    printf("Checking br_Name list count: %d \n", num_brName);
-
-    // Allocate memory for br_Name array
-    br_Name = (char **)malloc(num_brName * sizeof(char *));
-    // Fetch and store bridge names
-    printf("Checking br_Name values:\n");
-    for (i = 0; i < num_brName; i++)
-    {
-        br_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-        sprintf(br_Namex, "vlan/config/br_Name/%d", i);
-        UT_KVP_PROFILE_GET_STRING(br_Namex, br_Name[i]);
-        printf("%s \n", br_Name[i]);
-    }
-
-    // Get the number of interface names
-    num_ifName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/if_Name");
-    printf("Checking if_Name list count: %d \n", num_ifName);
-
-    // Allocate memory for if_Name array
-    if_Name = (char **)malloc(num_ifName * sizeof(char *));
-    // Fetch and store interface names
-    printf("Checking if_Name values:\n");
-    for (i = 0; i < num_ifName; i++)
-    {
-        if_Name[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-        sprintf(if_Namex, "vlan/config/if_Name/%d", i);
-        UT_KVP_PROFILE_GET_STRING(if_Namex, if_Name[i]);
-        printf("%s \n", if_Name[i]);
-    }
-
-    char vlanid[MAX_SIZE];
-    // Get the count of invalid_brName entries
-    num_vlanid = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
-    printf("Checking vlan_id list count: %d \n", num_vlanid);
-
-    // Allocate memory for invalid_brName array
-    valid_vlanid = (char **)malloc(num_vlanid * sizeof(char *));
-    printf("Checking valid vlanID values:\n");
-    for (i = 0; i < num_vlanid; i++)
-    {
-        valid_vlanid[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-        sprintf(vlanid, "vlan/config/vlanID/%d", i);
-        UT_KVP_PROFILE_GET_STRING(vlanid, valid_vlanid[i]);
-        printf("%s \n", valid_vlanid[i]);
-    }
-
-    char invalid_brNamex[MAX_SIZE];
-
-    // Get the count of invalid_brName entries
-    num_invalid_brName = UT_KVP_PROFILE_GET_LIST_COUNT("vlan/config/invalid_brName");
-    printf("Checking invalid_brName list count: %d \n", num_invalid_brName);
-
-    // Allocate memory for invalid_brName array
-    invalid_brName = (char **)malloc(num_invalid_brName * sizeof(char *));
-    printf("Checking invalid br_Name values:\n");
-    for (i = 0; i < num_invalid_brName; i++)
-    {
-        invalid_brName[i] = (char *)malloc(MAX_SIZE * sizeof(char));
-        sprintf(invalid_brNamex, "vlan/config/invalid_brName/%d", i);
-        UT_KVP_PROFILE_GET_STRING(invalid_brNamex, invalid_brName[i]);
-        printf("%s \n", invalid_brName[i]);
     }
 
     // Add tests to the suite
