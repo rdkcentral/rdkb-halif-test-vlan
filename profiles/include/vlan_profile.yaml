@@ -1,0 +1,25 @@
+# Temporary VLAN configuration file defined for testing purposes only.
+# All the values stated are example or reference values which are vendor-specific.
+
+vlan:
+  config:
+    if_Name:
+      - "wl1.1"
+      - "wl0.2"
+      - "wl0.7"
+      - "wl2.7"
+    br_Name:
+      - "brlan0"
+      - "brlan1"
+      - "brlan112"
+      - "brlan113"
+    invalid_brName:
+      - "brlanXYZ"
+      - "brlan@10"
+      - "1234"
+      - "bRLaN0"
+    vlanID:
+      - "1"
+      - "10"
+      - "2052"
+      - "4094"
